@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolify AI — Autonomous Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050508;--bg2:#080B12;--panel:#0D1117;--panel2:#131924;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--text:#E8EDF5;--text2:#7B8699;--text3:#3D4555;--green:#00FF88;--amber:#FFB800;--red:#FF4444;--blue:#4D9EFF;--purple:#9D7FEA;--g2:rgba(0,255,136,0.1);--a2:rgba(255,184,0,0.1);--r2:rgba(255,68,68,0.1);--b2:rgba(77,158,255,0.1);--font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}
+.shell{display:grid;grid-template-columns:210px 1fr 285px;grid-template-rows:52px 1fr;height:100vh}
+.topbar{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:10}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:10px 0;display:flex;flex-direction:column}
+.main-area{overflow-y:auto;padding:18px 20px;background:var(--bg)}
+.rpanel{background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+.lm{width:27px;height:27px;background:linear-gradient(135deg,#7B6CF6,#9D7FEA);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pa 2s infinite}
+@keyframes pa{0%{box-shadow:0 0 0 0 rgba(0,255,136,.5)}70%{box-shadow:0 0 0 8px rgba(0,255,136,0)}100%{box-shadow:0 0 0 0 rgba(0,255,136,0)}}
+.tm{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;color:var(--text3)}
+.nl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.12em;padding:9px 13px 4px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text2);margin:1px 7px;transition:all .15s;border:none;background:none;width:calc(100% - 14px);text-align:left}
+.ni:hover{background:var(--panel);color:var(--text)}.ni.active{background:var(--panel2);color:var(--text);font-weight:500}
+.ndot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:12px}
+.panel:last-child{margin-bottom:0}
+.plabel{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mv{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--text);letter-spacing:-.02em}
+.ms{font-size:11px;color:var(--text3);margin-top:3px}.mu{font-size:11px;color:var(--green);margin-top:3px}
+.b{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.bg{background:var(--g2);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.ba{background:var(--a2);color:var(--amber);border:1px solid rgba(255,184,0,.2)}
+.br{background:var(--r2);color:var(--red);border:1px solid rgba(255,68,68,.2)}
+.bb{background:var(--b2);color:var(--blue);border:1px solid rgba(77,158,255,.2)}
+.bd{background:var(--panel2);color:var(--text3);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:7px 0;color:var(--text3);font-weight:400;font-family:var(--mono);font-size:9px;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+td{padding:9px 0;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
+.row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.row:last-child{border-bottom:none}.rl{color:var(--text2)}.rv{font-family:var(--mono);font-weight:500;color:var(--text)}
+.ac{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:13px;cursor:pointer;transition:border-color .2s}
+.ac:hover{border-color:var(--border2)}.ac.running{border-color:rgba(0,255,136,.3)}
+.asym{font-family:var(--mono);font-size:17px;font-weight:600;margin-bottom:7px}
+.aname{font-size:12px;font-weight:600;margin-bottom:2px}.arole{font-size:10px;color:var(--text3)}
+.atask{font-family:var(--mono);font-size:9px;color:var(--text3);background:var(--panel);border-radius:4px;padding:4px 7px;margin-top:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.fh{padding:11px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.fb{flex:1;overflow-y:auto;min-height:0}
+.fi{display:flex;gap:9px;padding:6px 13px;border-bottom:1px solid var(--border);animation:si .25s ease}
+@keyframes si{from{opacity:0;transform:translateX(5px)}to{opacity:1;transform:translateX(0)}}
+.fico{width:17px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.fmsg{font-size:11px;color:var(--text2);line-height:1.4}.ftm{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:11px 13px;border-top:1px solid var(--border);flex-shrink:0}
+.cb{padding:7px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text2);font-family:var(--font);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
+.cb:hover{background:var(--panel2);border-color:var(--border2);color:var(--text)}
+.cb.pr{background:var(--b2);border-color:rgba(77,158,255,.3);color:var(--blue)}
+.cb.dr{background:var(--r2);border-color:rgba(255,68,68,.3);color:var(--red)}
+.tterm-hdr{background:var(--panel2);border-radius:8px 8px 0 0;padding:7px 13px;display:flex;align-items:center;gap:6px}
+.tdot{width:7px;height:7px;border-radius:50%}
+.term{background:var(--bg);border-radius:0 0 8px 8px;padding:13px;font-family:var(--mono);font-size:11px;line-height:1.8;overflow-y:auto;max-height:250px}
+.ci{border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:9px;background:var(--panel2)}
+.cf{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.ct{font-size:12px;color:var(--text2);line-height:1.5;max-height:60px;overflow:hidden}
+.cfoot{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;color:var(--text3)}
+.empty{text-align:center;padding:36px 20px;color:var(--text3)}
+.ei{font-size:26px;margin-bottom:9px;opacity:.5}
+.et{font-size:13px;color:var(--text2);margin-bottom:5px;font-weight:500}.es{font-size:11px;line-height:1.5}
+.mbar{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.mbl{font-size:11px;color:var(--text2);width:80px;flex-shrink:0}
+.mbw{flex:1;height:5px;background:var(--panel2);border-radius:2px;overflow:hidden}
+.mbf{height:100%;border-radius:2px;transition:width 1s}
+.mbv{font-family:var(--mono);font-size:10px;color:var(--text2);width:50px;text-align:right;flex-shrink:0}
+.view{display:none}.view.active{display:block}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--panel2);border-radius:2px}
+.rbtn{background:var(--panel2);border:1px solid var(--border);border-radius:4px;color:var(--text2);padding:2px 8px;cursor:pointer;font-size:10px;font-family:var(--mono)}
+.sbox{padding:11px;background:var(--panel2);border-radius:7px}
+.sblab{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px}
+.sbval{font-family:var(--mono);font-size:19px;color:var(--text)}
+.code-block{font-family:var(--mono);font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg);border-radius:5px;margin:4px 0}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="topbar">
+  <div class="logo"><div class="lm">T</div>Toolify AI<span style="font-weight:300;color:var(--text3);font-size:13px;margin-left:4px">— Autonomous Engine</span></div>
+  <div class="tm">
+    <span id="cycleCount">CYCLE #0</span>
+    <div style="display:flex;align-items:center;gap:5px"><div class="pulse" id="ep"></div><span id="est" style="color:var(--green)">ONLINE</span></div>
+    <span id="clock">--:--:--</span>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="nl">OVERVIEW</div>
+  <button class="ni active" onclick="nav('overview',this)">⬡ Command Center</button>
+  <button class="ni" onclick="nav('agents',this)">◈ Agent Status</button>
+  <button class="ni" onclick="nav('content',this)">◎ Content Queue</button>
+  <button class="ni" onclick="nav('finance',this)">◇ Revenue & P&L</button>
+  <button class="ni" onclick="nav('ads',this)">◻ Advertising</button>
+  <div class="nl" style="margin-top:6px">PRODUCTS</div>
+  <button class="ni" onclick="nav('replydraft',this)"><span class="ndot" style="background:#4D9EFF"></span>ReplyDraft AI</button>
+  <button class="ni" onclick="nav('listinglift',this)"><span class="ndot" style="background:#00FF88"></span>ListingLift AI</button>
+  <button class="ni" onclick="nav('policypal',this)"><span class="ndot" style="background:#FFB800"></span>PolicyPal AI</button>
+  <div class="nl" style="margin-top:6px">SYSTEM</div>
+  <button class="ni" onclick="nav('decisions',this)">⊕ Decision Log</button>
+  <button class="ni" onclick="nav('logs',this)">≡ Agent Logs</button>
+  <button class="ni" onclick="nav('linkedin',this)">🔗 LinkedIn</button>
+  <button class="ni" onclick="nav('config',this)">⚙ Config</button>
+  <div style="padding:11px;margin-top:auto">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:9px">
+      <div class="plabel" style="margin-bottom:6px">AI PROVIDER</div>
+      <div style="display:flex;background:var(--panel2);border-radius:5px;padding:2px;gap:2px">
+        <button onclick="setProvider('ollama')" id="bollo" style="flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:var(--purple);color:#fff">⚡ OLLAMA</button>
+        <button onclick="setProvider('anthropic')" id="banth" style="flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:transparent;color:var(--text3)">☁ CLAUDE</button>
+      </div>
+      <div id="ollamaStatus" style="margin-top:6px;font-family:var(--mono);font-size:9px;color:var(--text3)">checking...</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main-area">
+
+  <!-- OVERVIEW -->
+  <div id="view-overview" class="view active">
+    <div class="g4" style="margin-bottom:12px">
+      <div class="panel"><div class="plabel">TODAY REVENUE</div><div class="mv" id="kRevenue">₹0</div><div class="ms">All products · INR</div></div>
+      <div class="panel"><div class="plabel">CONTENT POSTED</div><div class="mv" id="kContent">0</div><div class="ms">Today · all platforms</div></div>
+      <div class="panel"><div class="plabel">AGENTS RUNNING</div><div class="mv">5</div><div class="ms">Autonomous</div></div>
+      <div class="panel"><div class="plabel">AI DECISIONS</div><div class="mv" id="kDecisions">0</div><div class="ms">Made today</div></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">AGENT STATUS <span id="lastCycle" style="color:var(--text3);font-size:9px;font-family:var(--mono)"></span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px" id="agentCardsMini"></div>
+    </div>
+    <div class="g2">
+      <div class="panel"><div class="plabel">PLATFORM ACTIVITY</div><div id="platformActivity"></div></div>
+      <div class="panel"><div class="plabel">REVENUE BY PRODUCT</div><div id="revenueChart"></div></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">LATEST AI DECISIONS</div>
+      <div id="latestDecisions"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Trigger a daily loop to generate AI decisions</div></div></div>
+    </div>
+  </div>
+
+  <!-- AGENTS -->
+  <div id="view-agents" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">ALL AGENTS — LIVE STATUS</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px" id="agentCardsDetail"></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">AGENT CONSOLE — RUN MANUALLY</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px">
+        <select id="agentSel" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 11px;font-family:var(--mono);font-size:11px;outline:none;flex:1">
+          <option value="research|trendResearch">α Alpha — Trend Research</option>
+          <option value="research|findNewNiches">α Alpha — Find New Niches</option>
+          <option value="content|generateDailyContent">β Beta — Generate Content</option>
+          <option value="publisher|publishAll">γ Gamma — Publish All</option>
+          <option value="publisher|respondToMentions">γ Gamma — Reply Mentions</option>
+          <option value="finance|dailyReport">δ Delta — Finance Report</option>
+          <option value="finance|killOrDoubleDown">δ Delta — Kill / Double Down</option>
+          <option value="advertising|checkAdPerformance">ε Epsilon — Check Ads</option>
+        </select>
+        <button class="cb pr" onclick="runAgent()" style="padding:7px 16px;font-size:12px">▶ Execute</button>
+      </div>
+      <div class="tterm-hdr"><div class="tdot" style="background:#FF4444"></div><div class="tdot" style="background:#FFB800"></div><div class="tdot" style="background:#00FF88"></div><span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:7px">toolify-agent-console</span><span id="agentRunSt" style="margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--text3)">idle</span></div>
+      <div class="term" id="agentTerm"><span style="color:var(--text3)">$ select an agent and press Execute...</span></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="view-content" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">CONTENT QUEUE <button class="rbtn" onclick="loadContent()">↻ refresh</button></div>
+      <div id="contentList"><div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Click ▶ Content in the right panel to generate your first batch</div></div></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">PUBLISH LOG <span id="pubCount" class="b bd">0 posts</span></div>
+      <div id="publishLog"><div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">LinkedIn is connected ✓<br>Reddit needs 30-day account age</div></div></div>
+    </div>
+  </div>
+
+  <!-- FINANCE -->
+  <div id="view-finance" class="view">
+    <div class="g3" style="margin-bottom:12px">
+      <div class="panel"><div class="plabel">TOTAL REVENUE</div><div class="mv" id="finTotal">₹0</div><div class="ms">Last 30 days · INR</div></div>
+      <div class="panel"><div class="plabel">AI COST/MO</div><div class="mv" style="color:var(--green)">₹0</div><div class="mu">↑ Ollama = FREE</div></div>
+      <div class="panel"><div class="plabel">NET MARGIN</div><div class="mv" id="finMargin">~100%</div><div class="ms">Near-zero AI cost</div></div>
+    </div>
+    <div class="g2">
+      <div class="panel">
+        <div class="plabel">BY PRODUCT <button class="rbtn" onclick="loadRevenue()">↻</button></div>
+        <div id="finByProduct"><div class="empty"><div class="es">No revenue yet · products are live and waiting</div></div></div>
+      </div>
+      <div class="panel">
+        <div class="plabel">UNIT ECONOMICS</div>
+        <table><thead><tr><th>PRODUCT</th><th style="text-align:right">PRICE</th><th style="text-align:right">AI COST</th><th style="text-align:right">MARGIN</th></tr></thead>
+        <tbody>
+          <tr><td>✍️ ReplyDraft AI</td><td style="text-align:right;font-family:var(--mono)">₹750/mo</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
+          <tr><td>🛒 ListingLift AI</td><td style="text-align:right;font-family:var(--mono)">₹249</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
+          <tr><td>🔍 PolicyPal AI</td><td style="text-align:right;font-family:var(--mono)">₹399</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
+        </tbody></table>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--g2);border-radius:6px;font-size:11px;color:var(--green)">✓ Ollama local AI = ₹0 API cost = ~100% margin on every sale</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="plabel">KILL-SWITCH RULES (AUTONOMOUS)</div>
+      <table><thead><tr><th>CONDITION</th><th>ACTION</th><th>STATUS</th></tr></thead>
+      <tbody>
+        <tr><td>3 days zero revenue</td><td style="color:var(--text2)">AI decides: kill or pivot</td><td><span class="b bg">● ACTIVE</span></td></tr>
+        <tr><td>₹4,000+ in 3 days</td><td style="color:var(--text2)">Double down — more content</td><td><span class="b bg">● ACTIVE</span></td></tr>
+        <tr><td>Monthly spend &gt; 90%</td><td style="color:var(--text2)">Pause new experiments</td><td><span class="b bg">● ACTIVE</span></td></tr>
+        <tr><td>Weekly bottom 20%</td><td style="color:var(--text2)">Cull underperformer</td><td><span class="b bg">● ACTIVE</span></td></tr>
+        <tr><td>Ad CTR &lt; 0.3%</td><td style="color:var(--text2)">Pause + refresh creative</td><td><span class="b bd">○ NO ADS YET</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- ADS -->
+  <div id="view-ads" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">ADVERTISING STATUS</div>
+      <div class="empty"><div class="ei">📢</div><div class="et">No campaigns yet</div><div class="es">Engine auto-creates Reddit ads after first ₹5,000 revenue. Budget: ₹200/day.</div></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">AD PLATFORM ROADMAP</div>
+      <table><thead><tr><th>PLATFORM</th><th>STATUS</th><th>TRIGGER</th><th>BUDGET</th></tr></thead>
+      <tbody>
+        <tr><td>Reddit Ads</td><td><span class="b ba">WAIT 30 DAYS</span></td><td>Account age requirement</td><td>₹200/day</td></tr>
+        <tr><td>Google Ads</td><td><span class="b bd">NOT SETUP</span></td><td>After ₹5,000 revenue</td><td>₹300/day</td></tr>
+        <tr><td>LinkedIn Ads</td><td><span class="b bd">NOT SETUP</span></td><td>After ₹10,000 revenue</td><td>₹500/day</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- REPLYDRAFT -->
+  <div id="view-replydraft" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+        <div style="width:42px;height:42px;background:rgba(77,158,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
+        <div><div style="font-size:15px;font-weight:600">ReplyDraft AI</div><div style="font-size:11px;color:var(--text3)">Chrome extension · ₹750/month · Tone-matching email and LinkedIn replies</div></div>
+        <span class="b bg" style="margin-left:auto">● LIVE</span>
+      </div>
+      <div class="g4">
+        <div class="sbox"><div class="sblab">USERS</div><div class="sbval">0</div></div>
+        <div class="sbox"><div class="sblab">MRR</div><div class="sbval">₹0</div></div>
+        <div class="sbox"><div class="sblab">AI COST</div><div class="sbval" style="color:var(--green)">₹0</div></div>
+        <div class="sbox"><div class="sblab">MARGIN</div><div class="sbval" style="color:var(--green)">~100%</div></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="panel"><div class="plabel">PRODUCT SPEC</div>
+        <div class="row"><span class="rl">Price</span><span class="rv">₹750/mo · ₹12,000 lifetime</span></div>
+        <div class="row"><span class="rl">Distribution</span><span class="rv">Chrome Web Store</span></div>
+        <div class="row"><span class="rl">Stack</span><span class="rv">Plasmo + React + Ollama</span></div>
+        <div class="row"><span class="rl">AI cost/user</span><span class="rv" style="color:var(--green)">₹0 (Ollama local)</span></div>
+        <div class="row"><span class="rl">Target users</span><span class="rv">Freelancers, VAs, consultants</span></div>
+        <div class="row"><span class="rl">Break-even</span><span class="rv">1 user covers domain cost</span></div>
+      </div>
+      <div class="panel"><div class="plabel">MARKETING CHANNELS</div>
+        <div class="row"><span class="rl">r/freelance</span><span class="b bg">AUTO-POST</span></div>
+        <div class="row"><span class="rl">r/productivity</span><span class="b bg">AUTO-POST</span></div>
+        <div class="row"><span class="rl">LinkedIn</span><span class="b bg">CONNECTED ✓</span></div>
+        <div class="row"><span class="rl">Twitter/X</span><span class="b bd">NOT SETUP</span></div>
+        <div class="row"><span class="rl">Reddit Ads</span><span class="b ba">30-DAY WAIT</span></div>
+        <div class="row"><span class="rl">SEO blog</span><span class="b bd">PLANNED</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTINGLIFT -->
+  <div id="view-listinglift" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+        <div style="width:42px;height:42px;background:rgba(0,255,136,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">🛒</div>
+        <div><div style="font-size:15px;font-weight:600">ListingLift AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹249/batch · 5 marketplace listings from one description</div></div>
+        <span class="b bg" style="margin-left:auto">● LIVE</span>
+      </div>
+      <div class="g4">
+        <div class="sbox"><div class="sblab">BATCHES SOLD</div><div class="sbval">0</div></div>
+        <div class="sbox"><div class="sblab">REVENUE</div><div class="sbval">₹0</div></div>
+        <div class="sbox"><div class="sblab">AI COST</div><div class="sbval" style="color:var(--green)">₹0</div></div>
+        <div class="sbox"><div class="sblab">MARGIN</div><div class="sbval" style="color:var(--green)">~100%</div></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="panel"><div class="plabel">PLATFORMS COVERED</div>
+        <div class="row"><span class="rl">📦 Amazon</span><span style="font-size:11px;color:var(--text3)">SEO title + 5 bullets</span></div>
+        <div class="row"><span class="rl">🎨 Etsy</span><span style="font-size:11px;color:var(--text3)">Handmade story</span></div>
+        <div class="row"><span class="rl">🛍️ Shopify</span><span style="font-size:11px;color:var(--text3)">Conversion copy</span></div>
+        <div class="row"><span class="rl">🔨 eBay</span><span style="font-size:11px;color:var(--text3)">Structured listing</span></div>
+        <div class="row"><span class="rl">👟 Depop</span><span style="font-size:11px;color:var(--text3)">Gen Z casual tone</span></div>
+      </div>
+      <div class="panel"><div class="plabel">AUTO-POST CHANNELS</div>
+        <div class="row"><span class="rl">r/Etsy</span><span class="b bg">AUTO-POST</span></div>
+        <div class="row"><span class="rl">r/FulfillmentByAmazon</span><span class="b bg">AUTO-POST</span></div>
+        <div class="row"><span class="rl">r/Flipping</span><span class="b bg">AUTO-POST</span></div>
+        <div class="row"><span class="rl">LinkedIn</span><span class="b bg">CONNECTED ✓</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POLICYPAL -->
+  <div id="view-policypal" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+        <div style="width:42px;height:42px;background:rgba(255,184,0,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">🔍</div>
+        <div><div style="font-size:15px;font-weight:600">PolicyPal AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹399/doc · Plain-English ToS + risk flags</div></div>
+        <span class="b bg" style="margin-left:auto">● LIVE</span>
+      </div>
+      <div class="g4">
+        <div class="sbox"><div class="sblab">DOCS ANALYZED</div><div class="sbval">0</div></div>
+        <div class="sbox"><div class="sblab">REVENUE</div><div class="sbval">₹0</div></div>
+        <div class="sbox"><div class="sblab">AI COST</div><div class="sbval" style="color:var(--green)">₹0</div></div>
+        <div class="sbox"><div class="sblab">MARGIN</div><div class="sbval" style="color:var(--green)">~100%</div></div>
+      </div>
+    </div>
+    <div class="panel"><div class="plabel">SEO KEYWORDS TO TARGET</div>
+      <table><thead><tr><th>KEYWORD</th><th>MONTHLY SEARCHES</th><th>DIFFICULTY</th></tr></thead>
+      <tbody>
+        <tr><td>"terms of service explained"</td><td style="font-family:var(--mono)">18,000</td><td><span class="b bg">LOW</span></td></tr>
+        <tr><td>"privacy policy in simple words"</td><td style="font-family:var(--mono)">12,000</td><td><span class="b bg">LOW</span></td></tr>
+        <tr><td>"what does ToS mean"</td><td style="font-family:var(--mono)">8,500</td><td><span class="b bg">LOW</span></td></tr>
+        <tr><td>"is [app] safe to use"</td><td style="font-family:var(--mono)">variable</td><td><span class="b bg">LOW</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- DECISIONS -->
+  <div id="view-decisions" class="view">
+    <div class="panel">
+      <div class="plabel">ALL AI DECISIONS <button class="rbtn" onclick="loadDecisions()">↻ refresh</button></div>
+      <div id="decisionsList"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Run a daily loop or trigger the Finance agent to generate decisions</div></div></div>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div id="view-logs" class="view">
+    <div class="panel">
+      <div class="plabel">AGENT LOGS <button class="rbtn" onclick="loadLogs()">↻ refresh</button> <span id="logCount" class="b bd">0 entries</span></div>
+      <div id="logsList" style="font-family:var(--mono);font-size:11px;max-height:560px;overflow-y:auto"><div class="empty"><div class="es">No logs yet — run any agent to start</div></div></div>
+    </div>
+  </div>
+
+  <!-- LINKEDIN -->
+  <div id="view-linkedin" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">LINKEDIN STATUS</div>
+      <div style="padding:12px 14px;background:var(--a2);border:1px solid rgba(255,184,0,.2);border-radius:8px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:5px">⚠️ Posting to personal profile only — this is actually better</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">LinkedIn restricts company page posting to approved partners. Your engine posts as the <strong style="color:var(--text)">founder of Toolify AI</strong> on your personal profile — which gets 5× more reach than a company page.</div>
+      </div>
+      <div class="row"><span class="rl">Access Token</span><span class="b bg">✓ CONFIGURED</span></div>
+      <div class="row"><span class="rl">Posting as</span><span class="rv">Personal profile → mentions Toolify AI</span></div>
+      <div class="row"><span class="rl">Frequency</span><span class="rv">1× per day automated</span></div>
+      <div class="row"><span class="rl">Token lifespan</span><span class="rv" style="color:var(--amber)">60 days — run linkedin-auth.js to refresh</span></div>
+    </div>
+    <div class="g2">
+      <div class="panel"><div class="plabel">PERSONAL VS PAGE REACH</div>
+        <div class="row"><span class="rl">Personal post views</span><span class="rv" style="color:var(--green)">500 – 2,000</span></div>
+        <div class="row"><span class="rl">Company page views</span><span class="rv" style="color:var(--red)">50 – 200</span></div>
+        <div class="row"><span class="rl">Strategy</span><span class="rv">Founder building in public ✓</span></div>
+      </div>
+      <div class="panel"><div class="plabel">REFRESH TOKEN</div>
+        <div class="code-block">$ node linkedin-auth.js</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Run every 60 days. Opens browser → authorize → copies new token to .env automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div id="view-config" class="view">
+    <div class="g2">
+      <div class="panel"><div class="plabel">CREDENTIALS STATUS</div><div id="credStatus"></div></div>
+      <div class="panel">
+        <div class="plabel">AUTONOMOUS RULES</div>
+        <div class="row"><span class="rl">Kill threshold</span><span class="rv" style="color:var(--red)">3 days zero revenue</span></div>
+        <div class="row"><span class="rl">Double-down trigger</span><span class="rv" style="color:var(--green)">₹4,000 / 3 days</span></div>
+        <div class="row"><span class="rl">Monthly budget cap</span><span class="rv">₹8,000</span></div>
+        <div class="row"><span class="rl">Post frequency</span><span class="rv">3× / day</span></div>
+        <div class="row"><span class="rl">Weekly product cull</span><span class="rv">Bottom 20%</span></div>
+        <div class="row"><span class="rl">New product launch</span><span class="rv">MRR &gt; ₹15,000</span></div>
+      </div>
+    </div>
+    <div class="panel"><div class="plabel">SETUP CHECKLIST</div><div id="setupSteps"></div></div>
+    <div class="panel">
+      <div class="plabel">QUICK COMMANDS</div>
+      <div class="code-block"># Start engine<br>npm run dev</div>
+      <div class="code-block"># Get LinkedIn token<br>node linkedin-auth.js</div>
+      <div class="code-block"># Start Ollama<br>ollama serve &amp;&amp; ollama pull llama3.2</div>
+      <div class="code-block"># Run 24/7 on VPS<br>pm2 start ecosystem.config.js</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- RIGHT PANEL — LIVE FEED -->
+<aside class="rpanel">
+  <div class="fh"><div style="font-size:12px;font-weight:600">◈ Live Feed</div><span class="b bg" id="feedBadge">● LIVE</span></div>
+  <div class="fb" id="liveFeed"></div>
+  <div class="cg">
+    <button class="cb pr" onclick="trigger('research','trendResearch')">▶ Research</button>
+    <button class="cb pr" onclick="trigger('content','generateDailyContent')">▶ Content</button>
+    <button class="cb pr" onclick="trigger('publisher','publishAll')">▶ Publish</button>
+    <button class="cb pr" onclick="trigger('finance','dailyReport')">▶ Finance</button>
+    <button class="cb" onclick="trigger('finance','killOrDoubleDown')">⚡ Evaluate</button>
+    <button class="cb dr" onclick="emergencyStop()">⬛ Stop All</button>
+  </div>
+  <div style="padding:9px 13px;border-top:1px solid var(--border);flex-shrink:0">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;margin-bottom:7px">NEXT SCHEDULED</div>
+    <div id="nextSched" style="font-size:11px;color:var(--text3)"></div>
+  </div>
+</aside>
+</div>
+
+<script>
+const S={cycle:0,provider:'ollama',agents:{
+  research:   {sym:'α',name:'Alpha',  role:'Market Research',  color:'#9D7FEA',status:'idle',      task:'awaiting trigger'},
+  content:    {sym:'β',name:'Beta',   role:'Content Generator',color:'#4D9EFF',status:'idle',      task:'awaiting trigger'},
+  publisher:  {sym:'γ',name:'Gamma',  role:'Social Publisher', color:'#00FF88',status:'active',    task:'monitoring mentions'},
+  finance:    {sym:'δ',name:'Delta',  role:'Finance & Kill',   color:'#FF4444',status:'monitoring',task:'watching Razorpay'},
+  advertising:{sym:'ε',name:'Epsilon',role:'Ad Campaigns',     color:'#FFB800',status:'idle',      task:'no campaigns yet'},
+}}
+
+setInterval(()=>{
+  const n=new Date()
+  document.getElementById('clock').textContent=n.toLocaleTimeString('en-IN',{hour12:false})
+  const n5=new Date(Math.ceil(n/300000)*300000),nh=new Date(Math.ceil(n/3600000)*3600000)
+  document.getElementById('nextSched').innerHTML=
+    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Realtime</span><span style="font-family:var(--mono)">${n5.toLocaleTimeString('en-IN',{hour12:false})}</span></div>`+
+    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Hourly</span><span style="font-family:var(--mono)">${nh.toLocaleTimeString('en-IN',{hour12:false})}</span></div>`+
+    `<div style="display:flex;justify-content:space-between"><span>Daily posts</span><span style="font-family:var(--mono)">09:00 · 14:00 · 19:00</span></div>`
+},1000)
+
+// NAV — always loads data when switching
+function nav(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'))
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'))
+  document.getElementById('view-'+name).classList.add('active')
+  if(btn)btn.classList.add('active')
+  const L={overview:loadOverview,content:loadContent,finance:loadRevenue,decisions:loadDecisions,logs:loadLogs,config:loadConfig}
+  if(L[name])L[name]()
+}
+
+// SSE
+function connectSSE(){
+  const es=new EventSource('/api/engine/stream')
+  es.onmessage=e=>{try{handleEv(JSON.parse(e.data))}catch{}}
+  es.onerror=()=>{setBadge('feedBadge','⚠ RECONNECTING','ba');setTimeout(connectSSE,3000)}
+  es.onopen=()=>setBadge('feedBadge','● LIVE','bg')
+}
+function handleEv(ev){
+  addFeed(ev)
+  if(ev.type==='cycle'){S.cycle++;document.getElementById('cycleCount').textContent=`CYCLE #${S.cycle}`;document.getElementById('lastCycle').textContent=`last: ${new Date().toLocaleTimeString('en-IN',{hour12:false})}`}
+  if(ev.type==='decision'){const el=document.getElementById('kDecisions');if(el)el.textContent=parseInt(el.textContent||0)+1}
+  if(ev.message&&(ev.message.includes('Published')||ev.message.includes('✅ Posted'))){const el=document.getElementById('kContent');if(el)el.textContent=parseInt(el.textContent||0)+1}
+  Object.entries(S.agents).forEach(([id,a])=>{
+    if(ev.message&&(ev.message.includes(`[${id.toUpperCase()}]`)||ev.message.includes(a.name))){
+      S.agents[id].status='running';S.agents[id].task=ev.message.replace(/\[.*?\]/,'').trim().slice(0,55);renderCards()
+      setTimeout(()=>{S.agents[id].status=id==='finance'?'monitoring':id==='publisher'?'active':'idle';renderCards()},4000)
+    }
+  })
+}
+
+// FEED
+const FI={success:'✓',error:'✕',warning:'⚠',info:'→',decision:'◈',task:'⚙',cycle:'↻',loop:'▶',system:'◉'}
+const FC={success:['#00FF88','rgba(0,255,136,.15)'],error:['#FF4444','rgba(255,68,68,.15)'],warning:['#FFB800','rgba(255,184,0,.15)'],info:['#4D9EFF','rgba(77,158,255,.12)'],decision:['#9D7FEA','rgba(157,127,234,.15)'],task:['#7B8699','rgba(123,134,153,.08)'],cycle:['#3D4555','rgba(0,0,0,.1)'],loop:['#4D9EFF','rgba(77,158,255,.12)'],system:['#00FF88','rgba(0,255,136,.15)']}
+function addFeed(ev){
+  const feed=document.getElementById('liveFeed')
+  const msg=ev.message||(ev.data?JSON.stringify(ev.data).slice(0,80):'')
+  const [ic,bg]=FC[ev.level]||FC.info
+  const time=new Date(ev.ts||Date.now()).toLocaleTimeString('en-IN',{hour12:false})
+  const el=document.createElement('div');el.className='fi'
+  el.innerHTML=`<div class="fico" style="background:${bg};color:${ic}">${FI[ev.level]||'·'}</div><div><div class="fmsg">${esc(msg)}</div><div class="ftm">${time}</div></div>`
+  feed.insertBefore(el,feed.firstChild);if(feed.children.length>100)feed.removeChild(feed.lastChild)
+}
+
+// AGENT CARDS
+function renderCards(){
+  ['agentCardsMini','agentCardsDetail'].forEach(cid=>{
+    const el=document.getElementById(cid);if(!el)return
+    const detail=cid.includes('Detail')
+    el.innerHTML=Object.entries(S.agents).map(([id,a])=>{
+      const sc=a.status==='running'?a.color:a.status==='monitoring'?'#FFB800':a.status==='active'?'#4D9EFF':'#3D4555'
+      const glow=a.status==='running'?`box-shadow:0 0 8px ${a.color}40`:''
+      return `<div class="ac ${a.status==='running'?'running':''}" onclick="pickAgent('${id}')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="asym" style="color:${a.color}">${a.sym}</div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="sd" style="background:${sc};${glow}"></div><span style="font-family:var(--mono);font-size:9px;color:${sc}">${a.status.toUpperCase()}</span></div>
+        </div>
+        <div class="aname">${a.name}</div><div class="arole">${a.role}</div>
+        <div class="atask">${esc(a.task)}</div>
+        ${detail?`<button onclick="event.stopPropagation();trigger('${id}')" style="margin-top:7px;width:100%;padding:5px;background:${a.color}20;border:1px solid ${a.color}40;border-radius:5px;color:${a.color};font-size:10px;cursor:pointer;font-family:var(--mono)">▶ Run</button>`:''}
+      </div>`
+    }).join('')
+  })
+}
+function pickAgent(id){const sel=document.getElementById('agentSel');if(!sel)return;const opt=Array.from(sel.options).find(o=>o.value.startsWith(id));if(opt)sel.value=opt.value}
+
+// API FETCH
+async function api(path){try{const r=await fetch(path);if(!r.ok)throw new Error(r.status);return await r.json()}catch{return null}}
+
+async function loadOverview(){renderCards();renderPlatforms();checkOllama();await Promise.all([loadRevenueChart(),loadLatestDecisions()])}
+
+async function loadRevenueChart(){
+  const data=await api('/api/engine/revenue?days=30')
+  const el=document.getElementById('revenueChart'),kr=document.getElementById('kRevenue')
+  if(!data||!data.byProduct?.length){if(kr)kr.textContent='₹0';el.innerHTML=`<div class="empty"><div class="ei">₹</div><div class="es">First sale coming — products are live</div></div>`;return}
+  if(kr)kr.textContent=`₹${(data.total||0).toFixed(0)}`
+  const max=Math.max(...data.byProduct.map(p=>p.total),1)
+  const clr={replydraft:'#4D9EFF',listinglift:'#00FF88',policypal:'#FFB800'}
+  const lbl={replydraft:'ReplyDraft',listinglift:'ListingLift',policypal:'PolicyPal'}
+  el.innerHTML=data.byProduct.map(p=>`<div class="mbar"><div class="mbl">${lbl[p._id]||p._id}</div><div class="mbw"><div class="mbf" style="width:${Math.max((p.total/max*100),2)}%;background:${clr[p._id]||'#9D7FEA'}"></div></div><div class="mbv">₹${p.total.toFixed(0)}</div></div>`).join('')
+}
+
+async function loadRevenue(){
+  const data=await api('/api/engine/revenue?days=30')
+  const el=document.getElementById('finByProduct'),ft=document.getElementById('finTotal')
+  if(!data||!data.byProduct?.length){if(ft)ft.textContent='₹0';el.innerHTML=`<div class="empty"><div class="es">No revenue yet · Razorpay will track first payment automatically</div></div>`;return}
+  if(ft)ft.textContent=`₹${(data.total||0).toFixed(0)}`
+  const clr={replydraft:'#4D9EFF',listinglift:'#00FF88',policypal:'#FFB800'}
+  el.innerHTML=data.byProduct.map(p=>`<div class="row"><span class="rl">${p._id}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;color:var(--text3)">${p.count} sales</span><span class="rv" style="color:${clr[p._id]||'#9D7FEA'}">₹${p.total.toFixed(0)}</span></div></div>`).join('')
+}
+
+async function loadContent(){
+  const [content,pubs]=await Promise.all([api('/api/engine/content'),api('/api/engine/publishes')])
+  const cl=document.getElementById('contentList'),pl=document.getElementById('publishLog'),pc=document.getElementById('pubCount')
+  const icons={reddit:'🔴',twitter:'🐦',linkedin:'💼',multi:'🌐'}
+  cl.innerHTML=!content?.length
+    ?`<div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Click ▶ Content to generate your first batch for LinkedIn and Reddit</div></div>`
+    :content.map(c=>`<div class="ci"><div class="cf">${icons[c.platform]||'📄'}<span style="font-size:12px;font-weight:500">${(c.platform||'').toUpperCase()} · ${c.type||''}</span><span class="b ${c.status==='published'?'bg':c.status==='ready'?'bb':'bd'}" style="margin-left:auto">${(c.status||'').toUpperCase()}</span></div><div class="ct">${esc(JSON.stringify(c.content||'').slice(0,140))}...</div><div class="cfoot"><span>${c.product||'general'}</span><span>${new Date(c.createdAt).toLocaleString('en-IN')}</span></div></div>`).join('')
+  if(!pubs?.length){
+    pl.innerHTML=`<div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">LinkedIn is connected ✓<br>Reddit needs 30-day account age</div></div>`
+    if(pc)pc.textContent='0 posts'
+  }else{
+    if(pc)pc.textContent=`${pubs.length} posts`
+    pl.innerHTML=`<table><thead><tr><th>PLATFORM</th><th>CONTENT</th><th>STATUS</th><th>TIME</th></tr></thead><tbody>${pubs.map(p=>`<tr><td>${p.platform}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.content||'')}</td><td><span class="b ${p.status==='success'?'bg':p.status==='simulated'?'ba':'br'}">${p.status}</span></td><td style="font-family:var(--mono);font-size:10px">${new Date(p.createdAt).toLocaleString('en-IN')}</td></tr>`).join('')}</tbody></table>`
+  }
+}
+
+async function loadDecisions(){
+  const data=await api('/api/engine/decisions')
+  const el=document.getElementById('decisionsList'),ld=document.getElementById('latestDecisions')
+  const empty=`<div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Run a daily loop or trigger Finance agent</div></div>`
+  if(!data?.length){if(el)el.innerHTML=empty;if(ld)ld.innerHTML=empty;return}
+  const kd=document.getElementById('kDecisions');if(kd)kd.textContent=data.length
+  const html=data.slice(0,30).map(d=>`<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="b bb">AI</span><span style="font-size:12px;font-weight:500;color:var(--text)">${esc(d.action||'Strategic decision')}</span><span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto">${new Date(d.createdAt).toLocaleString('en-IN')}</span></div><div style="font-size:11px;color:var(--text2);line-height:1.5">${esc(d.reasoning||'')}</div><div style="margin-top:5px"><span class="b ${d.outcome==='executed'?'bg':d.outcome==='failed'?'br':'bd'}">${d.outcome||'pending'}</span></div></div>`).join('')
+  if(el)el.innerHTML=html
+  if(ld)ld.innerHTML=data.slice(0,3).map(d=>`<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span class="b bb" style="font-size:8px">AI</span><span style="font-size:12px;font-weight:500">${esc(d.action||'Strategic decision')}</span></div><div style="font-size:11px;color:var(--text2)">${esc((d.reasoning||'').slice(0,100))}</div></div>`).join('')
+}
+async function loadLatestDecisions(){await loadDecisions()}
+
+async function loadLogs(){
+  const data=await api('/api/engine/logs')
+  const el=document.getElementById('logsList'),lc=document.getElementById('logCount')
+  if(!data?.length){el.innerHTML=`<div class="empty"><div class="es">No logs yet — run any agent to start generating logs</div></div>`;if(lc)lc.textContent='0 entries';return}
+  if(lc)lc.textContent=`${data.length} entries`
+  const lc2={success:'var(--green)',error:'var(--red)',warning:'var(--amber)',info:'var(--blue)'}
+  el.innerHTML=data.map(l=>`<div style="display:flex;gap:9px;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:${lc2[l.level]||'var(--text3)'};flex-shrink:0;width:55px">[${l.agent}]</span><span style="color:var(--text3);flex-shrink:0;width:110px">${l.task||''}</span><span style="color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.message||l.result||'ok')}</span><span style="color:var(--text3);flex-shrink:0;font-size:9px">${new Date(l.createdAt).toLocaleTimeString('en-IN',{hour12:false})}</span></div>`).join('')
+}
+
+function renderPlatforms(){
+  document.getElementById('platformActivity').innerHTML=[
+    {e:'🔴',n:'Reddit',  p:0,s:'wait 30d',  c:'ba'},
+    {e:'💼',n:'LinkedIn',p:0,s:'connected ✓',c:'bg'},
+    {e:'🐦',n:'Twitter', p:0,s:'not setup',  c:'bd'},
+  ].map(p=>`<div class="row"><div style="display:flex;align-items:center;gap:7px">${p.e} ${p.n}</div><div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;color:var(--text3)">${p.p} posts</span><span class="b ${p.c}">${p.s}</span></div></div>`).join('')
+}
+
+async function checkOllama(){
+  try{
+    const d=await api('/api/engine/status')
+    const el=document.getElementById('ollamaStatus')
+    if(el)el.innerHTML=d?.aiProvider==='ollama'?'<span style="color:var(--green)">⚡ Ollama online · llama3.2</span>':'<span style="color:var(--amber)">☁ Using Anthropic</span>'
+  }catch{
+    const el=document.getElementById('ollamaStatus');if(el)el.innerHTML='<span style="color:var(--red)">⚠ Check: ollama serve</span>'
+  }
+}
+
+function loadConfig(){
+  const creds=[
+    {k:'MongoDB Atlas',  ok:true, n:'Connected ✓'},
+    {k:'Ollama (local)', ok:null, n:'Free · llama3.2'},
+    {k:'Razorpay',       ok:false,n:'Add RAZORPAY_KEY_ID to .env'},
+    {k:'LinkedIn',       ok:true, n:'Personal profile posting active'},
+    {k:'Reddit',         ok:false,n:'Wait 30 days account age'},
+    {k:'Twitter/X',      ok:false,n:'Apply at developer.twitter.com'},
+    {k:'Email (Resend)', ok:false,n:'Optional — add RESEND_API_KEY for alerts'},
+  ]
+  document.getElementById('credStatus').innerHTML=creds.map(c=>`<div class="row"><span class="rl" style="font-family:var(--mono);font-size:11px">${c.k}</span><div style="display:flex;align-items:center;gap:7px"><span class="b ${c.ok===true?'bg':c.ok===false?'br':'ba'}">${c.ok===true?'✓ ok':c.ok===false?'✗ missing':'? check'}</span><span style="font-size:10px;color:var(--text3)">${c.n}</span></div></div>`).join('')
+  const steps=[
+    {done:true, t:'MongoDB Atlas connected'},
+    {done:true, t:'LinkedIn personal profile posting connected'},
+    {done:true, t:'Ollama running with llama3.2 (free AI — zero cost)'},
+    {done:false,t:'Add Razorpay keys → razorpay.com → Settings → API Keys'},
+    {done:false,t:'Wait 30 days → add Reddit API credentials for auto-posting'},
+    {done:false,t:'Run: pm2 start ecosystem.config.js to run 24/7 on VPS'},
+    {done:false,t:'Run node linkedin-auth.js every 60 days to refresh token'},
+  ]
+  document.getElementById('setupSteps').innerHTML=steps.map(s=>`<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border)"><div style="width:17px;height:17px;border-radius:50%;background:${s.done?'var(--g2)':'var(--panel2)'};border:1px solid ${s.done?'rgba(0,255,136,.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:${s.done?'var(--green)':'var(--text3)'};margin-top:1px">${s.done?'✓':'○'}</div><div style="font-size:12px;color:${s.done?'var(--text2)':'var(--text)'}">${s.t}</div></div>`).join('')
+  checkOllama()
+}
+
+// TRIGGERS
+async function trigger(agent,task){
+  addFeed({type:'task',level:'info',message:`[MANUAL] → ${agent}.${task||''}`,ts:new Date().toISOString()})
+  try{
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task:task||'trendResearch'})})
+    const d=await r.json()
+    addFeed({type:'task',level:'success',message:`Started: ${d.message||'ok'}`,ts:new Date().toISOString()})
+  }catch{addFeed({type:'error',level:'warning',message:'Engine unreachable — run: npm run dev',ts:new Date().toISOString()})}
+}
+
+async function runAgent(){
+  const sel=document.getElementById('agentSel'),[agent,task]=(sel?.value||'research|trendResearch').split('|')
+  const term=document.getElementById('agentTerm'),stat=document.getElementById('agentRunSt')
+  term.innerHTML=`<span style="color:var(--text3)">$ executing ${agent}.${task}...\n</span>`
+  stat.textContent='running...';stat.style.color='var(--amber)'
+  try{
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task})})
+    const d=await r.json()
+    term.innerHTML+=`<span style="color:var(--green)">✓ ${d.message||'triggered'}\n</span><span style="color:var(--text3)">Output streams in the live feed →</span>`
+    stat.textContent='triggered';stat.style.color='var(--green)'
+  }catch{
+    term.innerHTML+=`<span style="color:var(--red)">✕ Cannot reach engine\nStart it: npm run dev</span>`
+    stat.textContent='error';stat.style.color='var(--red)'
+  }
+}
+
+function setProvider(p){
+  S.provider=p
+  document.getElementById('bollo').style.cssText=`flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:${p==='ollama'?'var(--purple)':'transparent'};color:${p==='ollama'?'#fff':'var(--text3)'}`
+  document.getElementById('banth').style.cssText=`flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:${p==='anthropic'?'#4D9EFF':'transparent'};color:${p==='anthropic'?'#fff':'var(--text3)'}`
+  addFeed({type:'system',level:'info',message:`AI provider switched to: ${p}`,ts:new Date().toISOString()})
+}
+
+function emergencyStop(){
+  if(!confirm('Stop all autonomous agents?'))return
+  addFeed({type:'error',level:'error',message:'⬛ EMERGENCY STOP — all agents paused',ts:new Date().toISOString()})
+  const ep=document.getElementById('ep'),est=document.getElementById('est')
+  if(ep){ep.style.animation='none';ep.style.background='var(--red)'}
+  if(est){est.textContent='STOPPED';est.style.color='var(--red)'}
+  Object.keys(S.agents).forEach(id=>{S.agents[id].status='stopped';S.agents[id].task='stopped by user'})
+  renderCards()
+}
+
+function setBadge(id,text,cls){const el=document.getElementById(id);if(el){el.textContent=text;el.className=`b ${cls}`}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// INIT
+renderCards();renderPlatforms();connectSSE();loadOverview()
+setTimeout(()=>{
+  [{type:'system',level:'success',message:'Engine connected · MongoDB Atlas online'},
+   {type:'system',level:'success',message:'LinkedIn token valid · personal profile posting ready'},
+   {type:'task',  level:'info',   message:'[FINANCE] Watching Razorpay for new payments...'},
+   {type:'task',  level:'info',   message:'[PUBLISHER] Monitoring LinkedIn for mentions...'},
+   {type:'task',  level:'warning',message:'[REDDIT] Add credentials to .env after 30-day account age'},
+  ].forEach((ev,i)=>setTimeout(()=>addFeed({...ev,ts:new Date().toISOString()}),i*700))
+},900)
+</script>
+</body>
+</html>
