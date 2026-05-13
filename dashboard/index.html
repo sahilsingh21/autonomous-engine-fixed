@@ -81,8 +81,11 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 .sbox{padding:11px;background:var(--panel2);border-radius:7px}
 .sblab{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px}
 .sbval{font-family:var(--mono);font-size:19px;color:var(--text)}
-.code-block{font-family:var(--mono);font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg);border-radius:5px;margin:4px 0}
-</style>
+.code-block{font-family:var(--mono);font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg);border-radius:5px;margin:4px 0}  .topic-entry{display:flex;flex-direction:column;gap:8px}
+  .topic-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .topic-tag{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(77,158,255,.14);border:1px solid rgba(77,158,255,.28);color:var(--text);font-size:11px}
+  .topic-tag button{border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:11px;padding:0;margin:0}
+  .topic-note{font-size:10px;color:var(--text3);line-height:1.4}</style>
 </head>
 <body>
 <div class="shell">
@@ -405,9 +408,13 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
   <div class="fh"><div style="font-size:12px;font-weight:600">◈ Live Feed</div><span class="b bg" id="feedBadge">● LIVE</span></div>
   <div class="fb" id="liveFeed"></div>
   <div class="cg">
-    <div style="padding:10px 0 13px">
-      <div style="font-size:10px;color:var(--text3);margin-bottom:6px">CONTENT TOPIC</div>
-      <input id="contentTopic" placeholder="e.g. AI for founders, productivity, startup growth" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none" />
+    <div class="topic-entry">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px">CONTENT TOPICS</div>
+        <div class="topic-note">Press Enter or comma to add multiple topics</div>
+      </div>
+      <div id="topicTags" class="topic-tags"></div>
+      <input id="contentTopic" placeholder="Add topic and press Enter" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none" />
     </div>
     <button class="cb pr" onclick="trigger('research','trendResearch')">▶ Research</button>
     <button class="cb pr" onclick="trigger('content','generateDailyContent')">▶ Content</button>
@@ -614,8 +621,12 @@ function loadConfig(){
 // TRIGGERS
 async function trigger(agent,task,params={}){
   if(agent==='content'&&task==='generateDailyContent'){
-    const topicValue=document.getElementById('contentTopic')?.value?.trim()
-    if(topicValue)params.topic=topicValue
+    const topics=getTopicTags()
+    if(topics.length===1){
+      params.topic=topics[0]
+    } else if(topics.length>1){
+      params.topic=topics
+    }
     const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
     if(imagePromptValue)params.imagePrompt=imagePromptValue
   }
@@ -632,8 +643,12 @@ async function runAgent(){
   const sel=document.getElementById('agentSel'),[agent,task]=(sel?.value||'research|trendResearch').split('|')
   const params={}
   if(agent==='content'&&task==='generateDailyContent'){
-    const topicValue=document.getElementById('contentTopic')?.value?.trim()
-    if(topicValue)params.topic=topicValue
+    const topics=getTopicTags()
+    if(topics.length===1){
+      params.topic=topics[0]
+    } else if(topics.length>1){
+      params.topic=topics
+    }
     const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
     if(imagePromptValue)params.imagePrompt=imagePromptValue
   }
@@ -650,6 +665,54 @@ async function runAgent(){
     stat.textContent='error';stat.style.color='var(--red)'
   }
 }
+
+function addTopicTag(value){
+  const raw = String(value || '').split(',').map(t=>t.trim()).filter(Boolean)
+  if(!raw.length)return
+  const container = document.getElementById('topicTags')
+  const existing = Array.from(container.querySelectorAll('.topic-tag')).map(el=>el.dataset.topic)
+  raw.forEach(tag=>{
+    if(existing.includes(tag))return
+    const pill = document.createElement('span')
+    pill.className = 'topic-tag'
+    pill.dataset.topic = tag
+    pill.appendChild(document.createTextNode(tag))
+    const removeBtn = document.createElement('button')
+    removeBtn.type = 'button'
+    removeBtn.textContent = '×'
+    removeBtn.addEventListener('click', () => pill.remove())
+    pill.appendChild(removeBtn)
+    container.appendChild(pill)
+  })
+}
+
+function removeTopicTag(tag){
+  const container = document.getElementById('topicTags')
+  const node = container.querySelector(`.topic-tag[data-topic="${tag}"]`)
+  if(node)node.remove()
+}
+
+function getTopicTags(){
+  const container = document.getElementById('topicTags')
+  const tags = Array.from(container.querySelectorAll('.topic-tag')).map(el=>el.dataset.topic.trim()).filter(Boolean)
+  const rawValue = document.getElementById('contentTopic')?.value?.trim() || ''
+  const extra = rawValue.split(',').map(t=>t.trim()).filter(Boolean)
+  return [...tags, ...extra].filter((t,i,arr)=>t && arr.indexOf(t)===i)
+}
+
+function initTopicInput(){
+  const input = document.getElementById('contentTopic')
+  if(!input) return
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault()
+      addTopicTag(input.value)
+      input.value = ''
+    }
+  })
+}
+
+initTopicInput()
 
 function setProvider(p){
   S.provider=p

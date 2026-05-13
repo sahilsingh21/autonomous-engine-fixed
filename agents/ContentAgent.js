@@ -85,6 +85,34 @@ I built ReplyDraft AI to fix this:
 Link in comments if you want to try it.
 
 #Freelance #Productivity #ToolifyAI`,
+  `Software founders: the AI stack you build today is the product edge you sell tomorrow.
+
+I spend mornings designing the workflow, afternoons tuning prompts, and evenings checking that the automated engine still posts smart content.
+
+Toolify AI isn't just a product — it's a system that learns what founders care about:
+→ faster replies for freelancers
+→ better marketplace listings for sellers
+→ simpler policy summaries for startup teams
+
+The work is repetitive. The value is in making it feel effortless.
+
+If you build SaaS in India, think about the automation behind the scenes, not just the landing page.
+
+#ToolifyAI #SaaSIndia`,
+  `Every AI post I write starts with one question: what would make someone stop scrolling?
+
+For Toolify AI, that means talking about real pain:
+- client emails that take hours
+- marketplace listings that feel copy-pasted
+- policies that are impossible to understand
+
+Then I make the solution tangible with one small founder insight.
+
+A good SaaS post isn't a product pitch — it's a story that explains why the product exists.
+
+Building in public with AI means I can share both the wins and the work.
+
+#FounderLife #AI`,
 ]
 
 const FALLBACK_TWEETS = [
@@ -335,24 +363,28 @@ Return JSON array ONLY: ["tweet1","tweet2","tweet3","tweet4","tweet5","tweet6","
   // ── LinkedIn post — always returns something
   async generateLinkedInPost(product, angle) {
     const fallback = {
-      text: FALLBACK_LINKEDIN[this.postCount % FALLBACK_LINKEDIN.length],
+      text: FALLBACK_LINKEDIN[Math.floor(Math.random() * FALLBACK_LINKEDIN.length)],
       platform: 'linkedin',
       product: product.id
     }
 
-    const prompt = `Write a LinkedIn post (180-250 words) from a founder building Toolify AI in India.
+    const prompt = `Write a unique, high-energy LinkedIn post (180-250 words) from the founder of Toolify AI.
 
 Topic: ${angle}
-Related product: ${product.name} — solves: ${product.pain}
+Product: ${product.name} — solves: ${product.pain}
+Target: ${product.target}
+
+Focus on software, AI, SaaS, or founder lessons. Make the post feel modern, interesting, and worth reading for people in tech.
 
 Style:
-- Personal observation or story — NOT a press release
-- Hook first line (no "I'm excited to announce")
-- 3-4 real insights
-- Mention building Toolify AI naturally
-- Use fresh research and keep this post unique
-- End: "Toolify AI helps ${product.target}. Link in comments."
-- Max 2 hashtags: #ToolifyAI #BuildingInPublic
+- Start with a strong hook, question, or surprising observation
+- Use one short story, example, or real founder insight
+- Include 3 fresh takeaways about AI, automation, product building, or startup growth
+- Keep it personal and conversational — not a product pitch
+- Mention Toolify AI naturally in the story
+- End with a strong closing line and a soft comment CTA
+- Use no more than 2 hashtags from: #ToolifyAI #AI #SaaSIndia #FounderLife #Productivity
+- Avoid repetitive phrasing and avoid reusing exact sentences from past posts
 
 Write the post text directly. No JSON. Just the post.`
 
@@ -580,7 +612,10 @@ Return just the reply text.`
   }
 
   pickContentAngle(research, topic) {
-    if (topic?.trim()) return topic.trim()
+    if (Array.isArray(topic) && topic.length) {
+      return topic.map(t => String(t).trim()).filter(Boolean).join(' | ') 
+    }
+    if (typeof topic === 'string' && topic.trim()) return topic.trim()
     const angles = Array.isArray(research?.contentAngles) ? research.contentAngles.filter(Boolean) : []
     const topics = Array.isArray(research?.topTopics) ? research.topTopics.filter(Boolean) : []
     if (angles.length) return angles[Math.floor(Math.random() * angles.length)]
