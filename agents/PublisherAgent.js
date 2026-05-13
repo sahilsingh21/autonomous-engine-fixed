@@ -103,14 +103,37 @@ class PublisherAgent {
     // Build text — always have fallback
     const postText = this.buildLinkedInText(post)
 
+    let asset = null
+    if (post?.image?.data) {
+      try {
+        asset = await this.uploadLinkedInImage(post.image.data, post.image.alt || postText.slice(0, 120))
+      } catch (err) {
+        this.orchestrator.broadcast({
+          type: 'warning',
+          message: `[LINKEDIN] ⚠ Image upload failed, posting text only: ${err.message}`,
+          level: 'warning'
+        })
+      }
+    }
+
+    const shareContent = {
+      shareCommentary: { text: postText },
+      shareMediaCategory: asset ? 'IMAGE' : 'NONE',
+      ...(asset ? {
+        media: [{
+          status: 'READY',
+          description: { text: post.image?.alt || postText.slice(0, 120) },
+          media: asset,
+          title: { text: post.image?.title || 'Toolify AI' }
+        }]
+      } : {})
+    }
+
     const body = JSON.stringify({
       author:          `urn:li:person:${personId}`,
       lifecycleState:  'PUBLISHED',
       specificContent: {
-        'com.linkedin.ugc.ShareContent': {
-          shareCommentary:    { text: postText },
-          shareMediaCategory: 'NONE',
-        },
+        'com.linkedin.ugc.ShareContent': shareContent,
       },
       visibility: {
         'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC',
@@ -174,6 +197,49 @@ class PublisherAgent {
       req.write(body)
       req.end()
     })
+  }
+
+  async uploadLinkedInImage(imageData, alt = 'Generated image') {
+    const token = process.env.LINKEDIN_ACCESS_TOKEN
+    const personId = process.env.LINKEDIN_PERSON_ID
+    if (!token || !personId) throw new Error('LinkedIn credentials missing')
+
+    const registerBody = JSON.stringify({
+      registerUploadRequest: {
+        owner: `urn:li:person:${personId}`,
+        recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
+        serviceRelationships: [{ relationshipType: 'OWNER', identifier: 'urn:li:userGeneratedContent' }],
+      }
+    })
+
+    const register = await axios.post('https://api.linkedin.com/v2/assets?action=registerUpload', registerBody, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
+      timeout: 15000,
+    })
+
+    const uploadUrl = register.data?.value?.uploadMechanism?.['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']?.uploadUrl
+    const asset = register.data?.value?.asset
+    if (!uploadUrl || !asset) throw new Error('LinkedIn upload registration failed')
+
+    const match = imageData.match(/^data:(image\/png|image\/jpeg);base64,(.+)$/)
+    const base64 = match ? match[2] : imageData
+    const contentType = match ? match[1] : 'image/png'
+    const buffer = Buffer.from(base64, 'base64')
+
+    await axios.put(uploadUrl, buffer, {
+      headers: {
+        'Content-Type': contentType,
+        'Content-Length': buffer.length,
+      },
+      maxBodyLength: Infinity,
+      timeout: 30000,
+    })
+
+    return asset
   }
 
   buildLinkedInText(post) {

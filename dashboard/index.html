@@ -405,6 +405,10 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
   <div class="fh"><div style="font-size:12px;font-weight:600">◈ Live Feed</div><span class="b bg" id="feedBadge">● LIVE</span></div>
   <div class="fb" id="liveFeed"></div>
   <div class="cg">
+    <div style="padding:10px 0 13px">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:6px">CONTENT TOPIC</div>
+      <input id="contentTopic" placeholder="e.g. AI for founders, productivity, startup growth" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none" />
+    </div>
     <button class="cb pr" onclick="trigger('research','trendResearch')">▶ Research</button>
     <button class="cb pr" onclick="trigger('content','generateDailyContent')">▶ Content</button>
     <button class="cb pr" onclick="trigger('publisher','publishAll')">▶ Publish</button>
@@ -608,10 +612,17 @@ function loadConfig(){
 }
 
 // TRIGGERS
-async function trigger(agent,task){
+async function trigger(agent,task,params={}){
+  if(agent==='content'&&task==='generateDailyContent'){
+    const topicValue=document.getElementById('contentTopic')?.value?.trim()
+    if(topicValue)params.topic=topicValue
+    const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
+    if(imagePromptValue)params.imagePrompt=imagePromptValue
+  }
+
   addFeed({type:'task',level:'info',message:`[MANUAL] → ${agent}.${task||''}`,ts:new Date().toISOString()})
   try{
-    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task:task||'trendResearch'})})
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task:task||'trendResearch',params})})
     const d=await r.json()
     addFeed({type:'task',level:'success',message:`Started: ${d.message||'ok'}`,ts:new Date().toISOString()})
   }catch{addFeed({type:'error',level:'warning',message:'Engine unreachable — run: npm run dev',ts:new Date().toISOString()})}
@@ -619,11 +630,18 @@ async function trigger(agent,task){
 
 async function runAgent(){
   const sel=document.getElementById('agentSel'),[agent,task]=(sel?.value||'research|trendResearch').split('|')
+  const params={}
+  if(agent==='content'&&task==='generateDailyContent'){
+    const topicValue=document.getElementById('contentTopic')?.value?.trim()
+    if(topicValue)params.topic=topicValue
+    const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
+    if(imagePromptValue)params.imagePrompt=imagePromptValue
+  }
   const term=document.getElementById('agentTerm'),stat=document.getElementById('agentRunSt')
   term.innerHTML=`<span style="color:var(--text3)">$ executing ${agent}.${task}...\n</span>`
   stat.textContent='running...';stat.style.color='var(--amber)'
   try{
-    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task})})
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task,params})})
     const d=await r.json()
     term.innerHTML+=`<span style="color:var(--green)">✓ ${d.message||'triggered'}\n</span><span style="color:var(--text3)">Output streams in the live feed →</span>`
     stat.textContent='triggered';stat.style.color='var(--green)'
