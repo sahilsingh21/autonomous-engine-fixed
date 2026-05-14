@@ -80,10 +80,10 @@ class AgentOrchestrator extends EventEmitter {
     // Hourly
     cron.schedule('0 * * * *', () => this.hourlyLoop())
 
-    // Daily: 9am, 2pm, 7pm IST
+    // Daily: 9am IST
     cron.schedule('0 9 * * *',  () => this.dailyLoop())
-    cron.schedule('0 14 * * *', () => this.dailyLoop())
-    cron.schedule('0 19 * * *', () => this.dailyLoop())
+    // cron.schedule('0 14 * * *', () => this.dailyLoop())
+    // cron.schedule('0 19 * * *', () => this.dailyLoop())
 
     // Weekly: Monday 8am
     cron.schedule('0 8 * * 1', () => this.weeklyLoop())
