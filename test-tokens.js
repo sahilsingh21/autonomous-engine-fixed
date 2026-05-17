@@ -110,16 +110,18 @@ async function testTwitter() {
   })
 
   if (res.status === 200) {
-  const username = res.body?.data?.username || 'unknown'
-  console.log(`${OK}  Twitter/X connected · @${username}`)
-} else if (res.status === 401) {
-  console.log(`${ERR}  Invalid Twitter credentials`)
-} else if (res.status === 403) {
-  console.log(`${WARN}  API access limited on current X plan, but posting may still work`)
-  console.log(`              Try: npm run post-now`)
-} else {
-  console.log(`${WARN}  Twitter returned ${res.status}, continuing anyway`)
-}
+    const username = res.body?.data?.username || 'unknown'
+    console.log(`${OK}  Bearer token valid · @${username}`)
+    console.log(`              OAuth 1.0a keys set — posting should work`)
+  } else if (res.status === 401) {
+    console.log(`${ERR}  Bearer token invalid or expired`)
+    console.log(`              Fix: Regenerate at developer.twitter.com → Your App → Keys & Tokens`)
+  } else if (res.status === 403) {
+    console.log(`${WARN}  App needs "Read and Write" permissions`)
+    console.log(`              Fix: developer.twitter.com → App Settings → User authentication → Read and Write`)
+  } else {
+    console.log(`${ERR}  Error ${res.status}: ${JSON.stringify(res.body).slice(0, 100)}`)
+  }
 }
 
 async function testRazorpay() {

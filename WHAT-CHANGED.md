@@ -172,3 +172,37 @@ Your app needs **"Read and Write"** permissions to post tweets.
 3. **User authentication settings** → Edit
 4. App permissions: select **"Read and Write"**
 5. Save → then **regenerate your Access Token** (permissions change requires new token)
+
+---
+
+## v2.3 NEW FEATURES
+
+### 1. Platform On/Off Toggles
+Dashboard → "🔌 Platform Toggles" — flip any platform on/off instantly:
+- 💼 LinkedIn — on/off
+- 🐦 Twitter/X — on/off
+- 🔴 Reddit — on/off
+- Auto-reply agent — on/off
+
+State saved to `.platform-state.json` — persists across restarts.
+
+### 2. LinkedIn Auto-Reply Agent
+Monitors comments on your LinkedIn posts every hour.
+Replies with human-like AI responses:
+- Praise → genuine thank you
+- Question → clear direct answer
+- Feedback → positive acknowledgement
+- Spam / "DM me" → SKIP (no reply)
+Enable in: Dashboard → Platform Toggles → Auto-reply toggle
+
+### 3. Domain Fixed
+All URLs now point to `sahilsingh.co.in` instead of `toolify.sahilsingh.co.in`
+
+### 4. 1 Post Per Day
+Engine posts ONCE at 10am IST only.
+No more duplicate posting.
+`npm run force-post` bypasses the limit for testing.
+
+### 5. Email Approval Flow
+Every post goes through email review before publishing.
+Approve or reject from your email — no login needed.

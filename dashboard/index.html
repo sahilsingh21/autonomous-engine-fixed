@@ -37,6 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13
 .br{background:var(--r2);color:var(--red);border:1px solid rgba(255,68,68,.2)}
 .bb{background:var(--b2);color:var(--blue);border:1px solid rgba(77,158,255,.2)}
 .bd{background:var(--panel2);color:var(--text3);border:1px solid var(--border)}
+.bp{background:rgba(157,127,234,.15);color:var(--purple);border:1px solid rgba(157,127,234,.3)}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{text-align:left;padding:7px 0;color:var(--text3);font-weight:400;font-family:var(--mono);font-size:9px;letter-spacing:.08em;border-bottom:1px solid var(--border)}
 td{padding:9px 0;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
@@ -59,7 +60,9 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 .cb{padding:7px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text2);font-family:var(--font);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
 .cb:hover{background:var(--panel2);border-color:var(--border2);color:var(--text)}
 .cb.pr{background:var(--b2);border-color:rgba(77,158,255,.3);color:var(--blue)}
+.cb.pam{background:rgba(157,127,234,.15);border-color:rgba(157,127,234,.3);color:var(--purple)}
 .cb.dr{background:var(--r2);border-color:rgba(255,68,68,.3);color:var(--red)}
+.cb.gr{background:var(--g2);border-color:rgba(0,255,136,.3);color:var(--green)}
 .tterm-hdr{background:var(--panel2);border-radius:8px 8px 0 0;padding:7px 13px;display:flex;align-items:center;gap:6px}
 .tdot{width:7px;height:7px;border-radius:50%}
 .term{background:var(--bg);border-radius:0 0 8px 8px;padding:13px;font-family:var(--mono);font-size:11px;line-height:1.8;overflow-y:auto;max-height:250px}
@@ -81,19 +84,39 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 .sbox{padding:11px;background:var(--panel2);border-radius:7px}
 .sblab{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px}
 .sbval{font-family:var(--mono);font-size:19px;color:var(--text)}
-.code-block{font-family:var(--mono);font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg);border-radius:5px;margin:4px 0}  .topic-entry{display:flex;flex-direction:column;gap:8px}
-  .topic-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
-  .topic-tag{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(77,158,255,.14);border:1px solid rgba(77,158,255,.28);color:var(--text);font-size:11px}
-  .topic-tag button{border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:11px;padding:0;margin:0}
-  .topic-note{font-size:10px;color:var(--text3);line-height:1.4}</style>
+.code-block{font-family:var(--mono);font-size:11px;color:var(--text2);padding:8px 10px;background:var(--bg);border-radius:5px;margin:4px 0}
+/* TOGGLE SWITCH */
+.toggle-switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--panel2);border:1px solid var(--border2);border-radius:24px;transition:.2s}
+.toggle-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:var(--text3);border-radius:50%;transition:.2s}
+input:checked+.toggle-slider{background:rgba(0,255,136,.2);border-color:rgba(0,255,136,.4)}
+input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--green)}
+/* Approval card */
+.appr-card{border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;background:var(--panel2);position:relative;overflow:hidden}
+.appr-card.pending{border-left:3px solid var(--amber)}
+.appr-card.approved{border-left:3px solid var(--green);opacity:.7}
+.appr-card.rejected{border-left:3px solid var(--red);opacity:.7}
+.appr-preview{font-size:11px;color:var(--text2);line-height:1.5;max-height:80px;overflow:hidden;margin:8px 0;background:var(--bg);border-radius:5px;padding:8px 10px;font-family:var(--mono);white-space:pre-wrap}
+.appr-actions{display:flex;gap:7px;margin-top:10px}
+.appr-btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font);transition:all .15s}
+.appr-approve{background:var(--g2);color:var(--green);border:1px solid rgba(0,255,136,.3)}
+.appr-approve:hover{background:rgba(0,255,136,.2)}
+.appr-reject{background:var(--r2);color:var(--red);border:1px solid rgba(255,68,68,.3)}
+.appr-reject:hover{background:rgba(255,68,68,.2)}
+.appr-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:4px}
+.schedule-bar{background:var(--panel2);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.schedule-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+</style>
 </head>
 <body>
 <div class="shell">
 
 <header class="topbar">
-  <div class="logo"><div class="lm">T</div>Toolify AI<span style="font-weight:300;color:var(--text3);font-size:13px;margin-left:4px">— Autonomous Engine</span></div>
+  <div class="logo"><div class="lm">T</div>Toolify AI<span style="font-weight:300;color:var(--text3);font-size:13px;margin-left:4px">— Autonomous Engine v2.3</span></div>
   <div class="tm">
     <span id="cycleCount">CYCLE #0</span>
+    <div id="approvalBadge" style="display:none;align-items:center;gap:5px;background:var(--a2);border:1px solid rgba(255,184,0,.3);border-radius:4px;padding:2px 10px;font-size:10px;color:var(--amber)">📧 <span id="pendingCount">0</span> pending approval</div>
     <div style="display:flex;align-items:center;gap:5px"><div class="pulse" id="ep"></div><span id="est" style="color:var(--green)">ONLINE</span></div>
     <span id="clock">--:--:--</span>
   </div>
@@ -102,6 +125,7 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 <aside class="sidebar">
   <div class="nl">OVERVIEW</div>
   <button class="ni active" onclick="nav('overview',this)">⬡ Command Center</button>
+  <button class="ni" onclick="nav('approvals',this)" id="navApprovals">📧 Approvals <span id="sideApprovalCount" style="background:var(--amber);color:#000;border-radius:10px;padding:1px 6px;font-size:9px;margin-left:auto;display:none">0</span></button>
   <button class="ni" onclick="nav('agents',this)">◈ Agent Status</button>
   <button class="ni" onclick="nav('content',this)">◎ Content Queue</button>
   <button class="ni" onclick="nav('finance',this)">◇ Revenue & P&L</button>
@@ -113,6 +137,7 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
   <div class="nl" style="margin-top:6px">SYSTEM</div>
   <button class="ni" onclick="nav('decisions',this)">⊕ Decision Log</button>
   <button class="ni" onclick="nav('logs',this)">≡ Agent Logs</button>
+  <button class="ni" onclick="nav('platforms',this)">🔌 Platform Toggles</button>
   <button class="ni" onclick="nav('linkedin',this)">🔗 LinkedIn</button>
   <button class="ni" onclick="nav('config',this)">⚙ Config</button>
   <div style="padding:11px;margin-top:auto">
@@ -131,10 +156,24 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 
   <!-- OVERVIEW -->
   <div id="view-overview" class="view active">
+    <!-- Schedule bar -->
+    <div class="schedule-bar" id="scheduleBar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="schedule-dot" id="scheduleDot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+        <div>
+          <div style="font-size:12px;font-weight:500" id="scheduleStatus">Next post: today at 10:00 AM IST</div>
+          <div style="font-size:10px;color:var(--text3)" id="scheduleSubtext">1 post per day · email approval required</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="cb pam" onclick="triggerNow()" style="padding:6px 14px;font-size:11px">📧 Post Now (sends for review)</button>
+        <button class="cb gr" onclick="forcePost()" style="padding:6px 14px;font-size:11px">⚡ Force Post (skip review)</button>
+      </div>
+    </div>
     <div class="g4" style="margin-bottom:12px">
       <div class="panel"><div class="plabel">TODAY REVENUE</div><div class="mv" id="kRevenue">₹0</div><div class="ms">All products · INR</div></div>
-      <div class="panel"><div class="plabel">CONTENT POSTED</div><div class="mv" id="kContent">0</div><div class="ms">Today · all platforms</div></div>
-      <div class="panel"><div class="plabel">AGENTS RUNNING</div><div class="mv">5</div><div class="ms">Autonomous</div></div>
+      <div class="panel"><div class="plabel">POSTS TODAY</div><div class="mv" id="kContent">0</div><div class="ms">Published successfully</div></div>
+      <div class="panel"><div class="plabel">PENDING REVIEW</div><div class="mv" id="kPending" style="color:var(--amber)">0</div><div class="ms">Awaiting your approval</div></div>
       <div class="panel"><div class="plabel">AI DECISIONS</div><div class="mv" id="kDecisions">0</div><div class="ms">Made today</div></div>
     </div>
     <div class="panel">
@@ -147,7 +186,32 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
     </div>
     <div class="panel">
       <div class="plabel">LATEST AI DECISIONS</div>
-      <div id="latestDecisions"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Trigger a daily loop to generate AI decisions</div></div></div>
+      <div id="latestDecisions"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Engine generates decisions during daily loop</div></div></div>
+    </div>
+  </div>
+
+  <!-- APPROVALS -->
+  <div id="view-approvals" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">
+        EMAIL APPROVAL SYSTEM
+        <span class="b bp">REQUIRE_APPROVAL=true</span>
+      </div>
+      <div style="padding:10px 12px;background:rgba(157,127,234,.08);border:1px solid rgba(157,127,234,.2);border-radius:8px;margin-bottom:14px;font-size:12px;line-height:1.6;color:var(--text2)">
+        When the engine generates a post, it sends you an email to <strong style="color:var(--text)" id="approvalEmailDisplay">your email</strong> with the full content preview.<br>
+        You click <strong style="color:var(--green)">✅ Approve</strong> to publish or <strong style="color:var(--red)">❌ Reject</strong> to discard. The engine waits for your decision.
+      </div>
+      <div class="row"><span class="rl">Approval email</span><span class="rv" id="cfgApprovalEmail">loading...</span></div>
+      <div class="row"><span class="rl">Auto-approve after</span><span class="rv" id="cfgAutoApprove">Never (manual only)</span></div>
+      <div class="row"><span class="rl">Engine URL</span><span class="rv" id="cfgEngineUrl">loading...</span></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">PENDING APPROVALS <button class="rbtn" onclick="loadApprovals()">↻ refresh</button> <span id="pendingBadge" class="b ba">0 pending</span></div>
+      <div id="approvalList"><div class="empty"><div class="ei">📧</div><div class="et">No pending approvals</div><div class="es">When engine generates a post, it will appear here for review</div></div></div>
+    </div>
+    <div class="panel">
+      <div class="plabel">APPROVAL HISTORY <button class="rbtn" onclick="loadApprovalHistory()">↻ refresh</button></div>
+      <div id="approvalHistory"><div class="empty"><div class="es">No history yet</div></div></div>
     </div>
   </div>
 
@@ -158,17 +222,15 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px" id="agentCardsDetail"></div>
     </div>
     <div class="panel">
-      <div class="plabel">AGENT CONSOLE — RUN MANUALLY</div>
+      <div class="plabel">AGENT CONSOLE</div>
       <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px">
         <select id="agentSel" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 11px;font-family:var(--mono);font-size:11px;outline:none;flex:1">
           <option value="research|trendResearch">α Alpha — Trend Research</option>
           <option value="research|findNewNiches">α Alpha — Find New Niches</option>
           <option value="content|generateDailyContent">β Beta — Generate Content</option>
-          <option value="publisher|publishAll">γ Gamma — Publish All</option>
-          <option value="publisher|respondToMentions">γ Gamma — Reply Mentions</option>
+          <option value="publisher|publishAll">γ Gamma — Publish All (sends for approval)</option>
           <option value="finance|dailyReport">δ Delta — Finance Report</option>
           <option value="finance|killOrDoubleDown">δ Delta — Kill / Double Down</option>
-          <option value="advertising|checkAdPerformance">ε Epsilon — Check Ads</option>
         </select>
         <button class="cb pr" onclick="runAgent()" style="padding:7px 16px;font-size:12px">▶ Execute</button>
       </div>
@@ -181,11 +243,11 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
   <div id="view-content" class="view">
     <div class="panel" style="margin-bottom:12px">
       <div class="plabel">CONTENT QUEUE <button class="rbtn" onclick="loadContent()">↻ refresh</button></div>
-      <div id="contentList"><div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Click ▶ Content in the right panel to generate your first batch</div></div></div>
+      <div id="contentList"><div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Engine generates 1 post per day at 10am IST</div></div></div>
     </div>
     <div class="panel">
       <div class="plabel">PUBLISH LOG <span id="pubCount" class="b bd">0 posts</span></div>
-      <div id="publishLog"><div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">LinkedIn is connected ✓<br>Reddit needs 30-day account age</div></div></div>
+      <div id="publishLog"><div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">Posts appear here after your approval</div></div></div>
     </div>
   </div>
 
@@ -194,52 +256,25 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
     <div class="g3" style="margin-bottom:12px">
       <div class="panel"><div class="plabel">TOTAL REVENUE</div><div class="mv" id="finTotal">₹0</div><div class="ms">Last 30 days · INR</div></div>
       <div class="panel"><div class="plabel">AI COST/MO</div><div class="mv" style="color:var(--green)">₹0</div><div class="mu">↑ Ollama = FREE</div></div>
-      <div class="panel"><div class="plabel">NET MARGIN</div><div class="mv" id="finMargin">~100%</div><div class="ms">Near-zero AI cost</div></div>
+      <div class="panel"><div class="plabel">NET MARGIN</div><div class="mv">~100%</div><div class="ms">Near-zero AI cost</div></div>
     </div>
     <div class="g2">
-      <div class="panel">
-        <div class="plabel">BY PRODUCT <button class="rbtn" onclick="loadRevenue()">↻</button></div>
-        <div id="finByProduct"><div class="empty"><div class="es">No revenue yet · products are live and waiting</div></div></div>
-      </div>
+      <div class="panel"><div class="plabel">BY PRODUCT <button class="rbtn" onclick="loadRevenue()">↻</button></div><div id="finByProduct"><div class="empty"><div class="es">No revenue yet</div></div></div></div>
       <div class="panel">
         <div class="plabel">UNIT ECONOMICS</div>
-        <table><thead><tr><th>PRODUCT</th><th style="text-align:right">PRICE</th><th style="text-align:right">AI COST</th><th style="text-align:right">MARGIN</th></tr></thead>
+        <table><thead><tr><th>PRODUCT</th><th style="text-align:right">PRICE</th><th style="text-align:right">COST</th><th style="text-align:right">MARGIN</th></tr></thead>
         <tbody>
           <tr><td>✍️ ReplyDraft AI</td><td style="text-align:right;font-family:var(--mono)">₹750/mo</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
           <tr><td>🛒 ListingLift AI</td><td style="text-align:right;font-family:var(--mono)">₹249</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
           <tr><td>🔍 PolicyPal AI</td><td style="text-align:right;font-family:var(--mono)">₹399</td><td style="text-align:right;font-family:var(--mono);color:var(--green)">₹0</td><td style="text-align:right"><span class="b bg">~100%</span></td></tr>
         </tbody></table>
-        <div style="margin-top:10px;padding:8px 10px;background:var(--g2);border-radius:6px;font-size:11px;color:var(--green)">✓ Ollama local AI = ₹0 API cost = ~100% margin on every sale</div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="plabel">KILL-SWITCH RULES (AUTONOMOUS)</div>
-      <table><thead><tr><th>CONDITION</th><th>ACTION</th><th>STATUS</th></tr></thead>
-      <tbody>
-        <tr><td>3 days zero revenue</td><td style="color:var(--text2)">AI decides: kill or pivot</td><td><span class="b bg">● ACTIVE</span></td></tr>
-        <tr><td>₹4,000+ in 3 days</td><td style="color:var(--text2)">Double down — more content</td><td><span class="b bg">● ACTIVE</span></td></tr>
-        <tr><td>Monthly spend &gt; 90%</td><td style="color:var(--text2)">Pause new experiments</td><td><span class="b bg">● ACTIVE</span></td></tr>
-        <tr><td>Weekly bottom 20%</td><td style="color:var(--text2)">Cull underperformer</td><td><span class="b bg">● ACTIVE</span></td></tr>
-        <tr><td>Ad CTR &lt; 0.3%</td><td style="color:var(--text2)">Pause + refresh creative</td><td><span class="b bd">○ NO ADS YET</span></td></tr>
-      </tbody></table>
     </div>
   </div>
 
   <!-- ADS -->
   <div id="view-ads" class="view">
-    <div class="panel" style="margin-bottom:12px">
-      <div class="plabel">ADVERTISING STATUS</div>
-      <div class="empty"><div class="ei">📢</div><div class="et">No campaigns yet</div><div class="es">Engine auto-creates Reddit ads after first ₹5,000 revenue. Budget: ₹200/day.</div></div>
-    </div>
-    <div class="panel">
-      <div class="plabel">AD PLATFORM ROADMAP</div>
-      <table><thead><tr><th>PLATFORM</th><th>STATUS</th><th>TRIGGER</th><th>BUDGET</th></tr></thead>
-      <tbody>
-        <tr><td>Reddit Ads</td><td><span class="b ba">WAIT 30 DAYS</span></td><td>Account age requirement</td><td>₹200/day</td></tr>
-        <tr><td>Google Ads</td><td><span class="b bd">NOT SETUP</span></td><td>After ₹5,000 revenue</td><td>₹300/day</td></tr>
-        <tr><td>LinkedIn Ads</td><td><span class="b bd">NOT SETUP</span></td><td>After ₹10,000 revenue</td><td>₹500/day</td></tr>
-      </tbody></table>
-    </div>
+    <div class="panel"><div class="plabel">ADVERTISING STATUS</div><div class="empty"><div class="ei">📢</div><div class="et">No campaigns yet</div><div class="es">Auto-creates Reddit ads after first ₹5,000 revenue</div></div></div>
   </div>
 
   <!-- REPLYDRAFT -->
@@ -247,7 +282,7 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
     <div class="panel" style="margin-bottom:12px">
       <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
         <div style="width:42px;height:42px;background:rgba(77,158,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
-        <div><div style="font-size:15px;font-weight:600">ReplyDraft AI</div><div style="font-size:11px;color:var(--text3)">Chrome extension · ₹750/month · Tone-matching email and LinkedIn replies</div></div>
+        <div><div style="font-size:15px;font-weight:600">ReplyDraft AI</div><div style="font-size:11px;color:var(--text3)">Chrome extension · ₹750/month · Tone-matching email replies</div></div>
         <span class="b bg" style="margin-left:auto">● LIVE</span>
       </div>
       <div class="g4">
@@ -261,28 +296,24 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
       <div class="panel"><div class="plabel">PRODUCT SPEC</div>
         <div class="row"><span class="rl">Price</span><span class="rv">₹750/mo · ₹12,000 lifetime</span></div>
         <div class="row"><span class="rl">Distribution</span><span class="rv">Chrome Web Store</span></div>
-        <div class="row"><span class="rl">Stack</span><span class="rv">Plasmo + React + Ollama</span></div>
-        <div class="row"><span class="rl">AI cost/user</span><span class="rv" style="color:var(--green)">₹0 (Ollama local)</span></div>
-        <div class="row"><span class="rl">Target users</span><span class="rv">Freelancers, VAs, consultants</span></div>
-        <div class="row"><span class="rl">Break-even</span><span class="rv">1 user covers domain cost</span></div>
+        <div class="row"><span class="rl">AI cost/user</span><span class="rv" style="color:var(--green)">₹0 (Ollama)</span></div>
+        <div class="row"><span class="rl">Target</span><span class="rv">Freelancers, VAs, consultants</span></div>
       </div>
-      <div class="panel"><div class="plabel">MARKETING CHANNELS</div>
+      <div class="panel"><div class="plabel">MARKETING</div>
         <div class="row"><span class="rl">r/freelance</span><span class="b bg">AUTO-POST</span></div>
-        <div class="row"><span class="rl">r/productivity</span><span class="b bg">AUTO-POST</span></div>
         <div class="row"><span class="rl">LinkedIn</span><span class="b bg">CONNECTED ✓</span></div>
-        <div class="row"><span class="rl">Twitter/X</span><span class="b bd">NOT SETUP</span></div>
+        <div class="row"><span class="rl">Twitter/X</span><span class="b bb">CONFIGURED</span></div>
         <div class="row"><span class="rl">Reddit Ads</span><span class="b ba">30-DAY WAIT</span></div>
-        <div class="row"><span class="rl">SEO blog</span><span class="b bd">PLANNED</span></div>
       </div>
     </div>
   </div>
 
   <!-- LISTINGLIFT -->
   <div id="view-listinglift" class="view">
-    <div class="panel" style="margin-bottom:12px">
+    <div class="panel">
       <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
         <div style="width:42px;height:42px;background:rgba(0,255,136,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">🛒</div>
-        <div><div style="font-size:15px;font-weight:600">ListingLift AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹249/batch · 5 marketplace listings from one description</div></div>
+        <div><div style="font-size:15px;font-weight:600">ListingLift AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹249/batch · 5 marketplace listings</div></div>
         <span class="b bg" style="margin-left:auto">● LIVE</span>
       </div>
       <div class="g4">
@@ -292,89 +323,48 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
         <div class="sbox"><div class="sblab">MARGIN</div><div class="sbval" style="color:var(--green)">~100%</div></div>
       </div>
     </div>
-    <div class="g2">
-      <div class="panel"><div class="plabel">PLATFORMS COVERED</div>
-        <div class="row"><span class="rl">📦 Amazon</span><span style="font-size:11px;color:var(--text3)">SEO title + 5 bullets</span></div>
-        <div class="row"><span class="rl">🎨 Etsy</span><span style="font-size:11px;color:var(--text3)">Handmade story</span></div>
-        <div class="row"><span class="rl">🛍️ Shopify</span><span style="font-size:11px;color:var(--text3)">Conversion copy</span></div>
-        <div class="row"><span class="rl">🔨 eBay</span><span style="font-size:11px;color:var(--text3)">Structured listing</span></div>
-        <div class="row"><span class="rl">👟 Depop</span><span style="font-size:11px;color:var(--text3)">Gen Z casual tone</span></div>
-      </div>
-      <div class="panel"><div class="plabel">AUTO-POST CHANNELS</div>
-        <div class="row"><span class="rl">r/Etsy</span><span class="b bg">AUTO-POST</span></div>
-        <div class="row"><span class="rl">r/FulfillmentByAmazon</span><span class="b bg">AUTO-POST</span></div>
-        <div class="row"><span class="rl">r/Flipping</span><span class="b bg">AUTO-POST</span></div>
-        <div class="row"><span class="rl">LinkedIn</span><span class="b bg">CONNECTED ✓</span></div>
-      </div>
-    </div>
   </div>
 
   <!-- POLICYPAL -->
   <div id="view-policypal" class="view">
-    <div class="panel" style="margin-bottom:12px">
+    <div class="panel">
       <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
         <div style="width:42px;height:42px;background:rgba(255,184,0,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px">🔍</div>
-        <div><div style="font-size:15px;font-weight:600">PolicyPal AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹399/doc · Plain-English ToS + risk flags</div></div>
+        <div><div style="font-size:15px;font-weight:600">PolicyPal AI</div><div style="font-size:11px;color:var(--text3)">Web app · ₹399/doc · ToS analysis</div></div>
         <span class="b bg" style="margin-left:auto">● LIVE</span>
       </div>
       <div class="g4">
-        <div class="sbox"><div class="sblab">DOCS ANALYZED</div><div class="sbval">0</div></div>
+        <div class="sbox"><div class="sblab">DOCS</div><div class="sbval">0</div></div>
         <div class="sbox"><div class="sblab">REVENUE</div><div class="sbval">₹0</div></div>
         <div class="sbox"><div class="sblab">AI COST</div><div class="sbval" style="color:var(--green)">₹0</div></div>
         <div class="sbox"><div class="sblab">MARGIN</div><div class="sbval" style="color:var(--green)">~100%</div></div>
       </div>
     </div>
-    <div class="panel"><div class="plabel">SEO KEYWORDS TO TARGET</div>
-      <table><thead><tr><th>KEYWORD</th><th>MONTHLY SEARCHES</th><th>DIFFICULTY</th></tr></thead>
-      <tbody>
-        <tr><td>"terms of service explained"</td><td style="font-family:var(--mono)">18,000</td><td><span class="b bg">LOW</span></td></tr>
-        <tr><td>"privacy policy in simple words"</td><td style="font-family:var(--mono)">12,000</td><td><span class="b bg">LOW</span></td></tr>
-        <tr><td>"what does ToS mean"</td><td style="font-family:var(--mono)">8,500</td><td><span class="b bg">LOW</span></td></tr>
-        <tr><td>"is [app] safe to use"</td><td style="font-family:var(--mono)">variable</td><td><span class="b bg">LOW</span></td></tr>
-      </tbody></table>
-    </div>
   </div>
 
   <!-- DECISIONS -->
   <div id="view-decisions" class="view">
-    <div class="panel">
-      <div class="plabel">ALL AI DECISIONS <button class="rbtn" onclick="loadDecisions()">↻ refresh</button></div>
-      <div id="decisionsList"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Run a daily loop or trigger the Finance agent to generate decisions</div></div></div>
-    </div>
+    <div class="panel"><div class="plabel">ALL AI DECISIONS <button class="rbtn" onclick="loadDecisions()">↻ refresh</button></div><div id="decisionsList"><div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div></div></div></div>
   </div>
 
   <!-- LOGS -->
   <div id="view-logs" class="view">
-    <div class="panel">
-      <div class="plabel">AGENT LOGS <button class="rbtn" onclick="loadLogs()">↻ refresh</button> <span id="logCount" class="b bd">0 entries</span></div>
-      <div id="logsList" style="font-family:var(--mono);font-size:11px;max-height:560px;overflow-y:auto"><div class="empty"><div class="es">No logs yet — run any agent to start</div></div></div>
-    </div>
+    <div class="panel"><div class="plabel">AGENT LOGS <button class="rbtn" onclick="loadLogs()">↻ refresh</button> <span id="logCount" class="b bd">0 entries</span></div><div id="logsList" style="font-family:var(--mono);font-size:11px;max-height:560px;overflow-y:auto"><div class="empty"><div class="es">No logs yet</div></div></div></div>
   </div>
 
   <!-- LINKEDIN -->
   <div id="view-linkedin" class="view">
     <div class="panel" style="margin-bottom:12px">
       <div class="plabel">LINKEDIN STATUS</div>
-      <div style="padding:12px 14px;background:var(--a2);border:1px solid rgba(255,184,0,.2);border-radius:8px;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:5px">⚠️ Posting to personal profile only — this is actually better</div>
-        <div style="font-size:11px;color:var(--text2);line-height:1.6">LinkedIn restricts company page posting to approved partners. Your engine posts as the <strong style="color:var(--text)">founder of Toolify AI</strong> on your personal profile — which gets 5× more reach than a company page.</div>
+      <div style="padding:10px 12px;background:var(--a2);border:1px solid rgba(255,184,0,.2);border-radius:8px;margin-bottom:12px;font-size:11px;color:var(--text2);line-height:1.6">
+        ⚠️ <strong style="color:var(--amber)">Posting to personal profile</strong> — this gets 5× more reach than a company page. The engine posts as the <strong style="color:var(--text)">founder of Toolify AI</strong>.
       </div>
       <div class="row"><span class="rl">Access Token</span><span class="b bg">✓ CONFIGURED</span></div>
       <div class="row"><span class="rl">Posting as</span><span class="rv">Personal profile → mentions Toolify AI</span></div>
-      <div class="row"><span class="rl">Frequency</span><span class="rv">1× per day automated</span></div>
-      <div class="row"><span class="rl">Token lifespan</span><span class="rv" style="color:var(--amber)">60 days — run linkedin-auth.js to refresh</span></div>
+      <div class="row"><span class="rl">Frequency</span><span class="rv">1× per day · email approval required</span></div>
+      <div class="row"><span class="rl">Token expires</span><span class="rv" style="color:var(--amber)">Every 60 days — run: node linkedin-auth.js</span></div>
     </div>
-    <div class="g2">
-      <div class="panel"><div class="plabel">PERSONAL VS PAGE REACH</div>
-        <div class="row"><span class="rl">Personal post views</span><span class="rv" style="color:var(--green)">500 – 2,000</span></div>
-        <div class="row"><span class="rl">Company page views</span><span class="rv" style="color:var(--red)">50 – 200</span></div>
-        <div class="row"><span class="rl">Strategy</span><span class="rv">Founder building in public ✓</span></div>
-      </div>
-      <div class="panel"><div class="plabel">REFRESH TOKEN</div>
-        <div class="code-block">$ node linkedin-auth.js</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">Run every 60 days. Opens browser → authorize → copies new token to .env automatically.</div>
-      </div>
-    </div>
+    <div class="panel"><div class="plabel">REFRESH TOKEN</div><div class="code-block">$ node linkedin-auth.js</div><div style="font-size:11px;color:var(--text3);margin-top:8px">Run every 60 days. Opens browser → authorize → new token saved.</div></div>
   </div>
 
   <!-- CONFIG -->
@@ -383,45 +373,125 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
       <div class="panel"><div class="plabel">CREDENTIALS STATUS</div><div id="credStatus"></div></div>
       <div class="panel">
         <div class="plabel">AUTONOMOUS RULES</div>
+        <div class="row"><span class="rl">Posts per day</span><span class="rv" style="color:var(--green)">1 (10am IST)</span></div>
+        <div class="row"><span class="rl">Approval required</span><span class="rv" id="cfgApprovalMode">loading...</span></div>
         <div class="row"><span class="rl">Kill threshold</span><span class="rv" style="color:var(--red)">3 days zero revenue</span></div>
         <div class="row"><span class="rl">Double-down trigger</span><span class="rv" style="color:var(--green)">₹4,000 / 3 days</span></div>
         <div class="row"><span class="rl">Monthly budget cap</span><span class="rv">₹8,000</span></div>
-        <div class="row"><span class="rl">Post frequency</span><span class="rv">3× / day</span></div>
-        <div class="row"><span class="rl">Weekly product cull</span><span class="rv">Bottom 20%</span></div>
         <div class="row"><span class="rl">New product launch</span><span class="rv">MRR &gt; ₹15,000</span></div>
       </div>
     </div>
-    <div class="panel"><div class="plabel">SETUP CHECKLIST</div><div id="setupSteps"></div></div>
+    <div class="panel"><div class="plabel">QUICK COMMANDS</div>
+      <div class="code-block"># Test all credentials<br>node test-tokens.js</div>
+      <div class="code-block"># Post now (sends for email approval)<br>npm run post-now</div>
+      <div class="code-block"># Force post (bypass approval + daily limit)<br>npm run force-post</div>
+      <div class="code-block"># Run engine 24/7<br>npm run dev</div>
+      <div class="code-block"># Refresh LinkedIn token (every 60 days)<br>node linkedin-auth.js</div>
+    </div>
+  </div>
+
+
+  <!-- PLATFORMS -->
+  <div id="view-platforms" class="view">
+    <div class="panel" style="margin-bottom:12px">
+      <div class="plabel">PLATFORM TOGGLES — ON / OFF</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6">Control which platforms the engine posts to. Turning a platform OFF stops all posting to it immediately — even if content has been generated.</p>
+
+      <!-- LinkedIn -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;background:rgba(10,102,194,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">💼</div>
+          <div>
+            <div style="font-weight:600;font-size:13px">LinkedIn</div>
+            <div style="font-size:11px;color:var(--text3)" id="li-status-text">Personal profile · 1 post/day</div>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-linkedin" onchange="setPlatform('linkedin',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Twitter -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;background:rgba(29,161,242,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🐦</div>
+          <div>
+            <div style="font-weight:600;font-size:13px">Twitter / X</div>
+            <div style="font-size:11px;color:var(--text3)" id="tw-status-text">OAuth 1.0a · thread posting</div>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-twitter" onchange="setPlatform('twitter',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Reddit -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;background:rgba(255,69,0,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🔴</div>
+          <div>
+            <div style="font-weight:600;font-size:13px">Reddit</div>
+            <div style="font-size:11px;color:var(--text3)" id="rd-status-text">Waiting for 30-day account age</div>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-reddit" onchange="setPlatform('reddit',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- LinkedIn Reply Agent -->
     <div class="panel">
-      <div class="plabel">QUICK COMMANDS</div>
-      <div class="code-block"># Start engine<br>npm run dev</div>
-      <div class="code-block"># Get LinkedIn token<br>node linkedin-auth.js</div>
-      <div class="code-block"># Start Ollama<br>ollama serve &amp;&amp; ollama pull llama3.2</div>
-      <div class="code-block"># Run 24/7 on VPS<br>pm2 start ecosystem.config.js</div>
+      <div class="plabel">LINKEDIN AUTO-REPLY AGENT</div>
+      <div style="padding:10px 12px;background:rgba(157,127,234,.08);border:1px solid rgba(157,127,234,.2);border-radius:8px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.6">
+        Monitors comments on your LinkedIn posts every hour and replies automatically using AI.<br>
+        <strong style="color:var(--text)">Rules:</strong> Short &amp; human · Matches comment tone · Skips spam · Never mentions AI
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:14px;border:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:13px">Auto-reply to LinkedIn comments</div>
+          <div style="font-size:11px;color:var(--text3)">Runs every hour · AI-powered · human-like replies</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-linkedinReply" onchange="setPlatform('linkedinReply',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="plabel" style="margin-bottom:10px">REPLY EXAMPLES</div>
+      <table>
+        <thead><tr><th>COMMENT TYPE</th><th>AI REPLY STYLE</th></tr></thead>
+        <tbody>
+          <tr><td>"This is impressive!"</td><td style="color:var(--text2)">"Thank you! Glad you found it useful."</td></tr>
+          <tr><td>"Does it support Twitter?"</td><td style="color:var(--text2)">"Not yet, but that feature is in development."</td></tr>
+          <tr><td>"AI content feels generic"</td><td style="color:var(--text2)">"Fair feedback — working to make it more personalized."</td></tr>
+          <tr><td>"DM me" / spam</td><td style="color:var(--text3)">SKIP — no reply sent</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:14px">
+        <button class="cb pr" onclick="trigger('linkedinReply','scanAndReply')" style="padding:8px 16px;font-size:12px">▶ Scan Comments Now</button>
+      </div>
     </div>
   </div>
 
 </main>
 
-<!-- RIGHT PANEL — LIVE FEED -->
+<!-- RIGHT PANEL -->
 <aside class="rpanel">
   <div class="fh"><div style="font-size:12px;font-weight:600">◈ Live Feed</div><span class="b bg" id="feedBadge">● LIVE</span></div>
   <div class="fb" id="liveFeed"></div>
   <div class="cg">
-    <div class="topic-entry">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:6px">CONTENT TOPICS</div>
-        <div class="topic-note">Press Enter or comma to add multiple topics</div>
-      </div>
-      <div id="topicTags" class="topic-tags"></div>
-      <input id="contentTopic" placeholder="Add topic and press Enter" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none" />
-    </div>
-    <button class="cb pr" onclick="trigger('research','trendResearch')">▶ Research</button>
-    <button class="cb pr" onclick="trigger('content','generateDailyContent')">▶ Content</button>
-    <button class="cb pr" onclick="trigger('publisher','publishAll')">▶ Publish</button>
-    <button class="cb pr" onclick="trigger('finance','dailyReport')">▶ Finance</button>
-    <button class="cb" onclick="trigger('finance','killOrDoubleDown')">⚡ Evaluate</button>
-    <button class="cb dr" onclick="emergencyStop()">⬛ Stop All</button>
+    <button class="cb pam" onclick="triggerNow()" title="Generate content and send for your email approval">📧 Send for Review</button>
+    <button class="cb gr"  onclick="forcePost()"  title="Post immediately — bypass approval and daily limit">⚡ Force Post</button>
+    <button class="cb pr"  onclick="trigger('research','trendResearch')">▶ Research</button>
+    <button class="cb pr"  onclick="trigger('finance','dailyReport')">▶ Finance</button>
+    <button class="cb"     onclick="nav('approvals',document.querySelector('[onclick*=approvals]'))">📋 Approvals</button>
+    <button class="cb dr"  onclick="emergencyStop()">⬛ Stop All</button>
   </div>
   <div style="padding:9px 13px;border-top:1px solid var(--border);flex-shrink:0">
     <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;margin-bottom:7px">NEXT SCHEDULED</div>
@@ -431,31 +501,39 @@ td:first-child{color:var(--text)}tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-const S={cycle:0,provider:'ollama',agents:{
+const S={cycle:0,provider:'ollama',requireApproval:false,agents:{
   research:   {sym:'α',name:'Alpha',  role:'Market Research',  color:'#9D7FEA',status:'idle',      task:'awaiting trigger'},
   content:    {sym:'β',name:'Beta',   role:'Content Generator',color:'#4D9EFF',status:'idle',      task:'awaiting trigger'},
-  publisher:  {sym:'γ',name:'Gamma',  role:'Social Publisher', color:'#00FF88',status:'active',    task:'monitoring mentions'},
+  publisher:  {sym:'γ',name:'Gamma',  role:'Social Publisher', color:'#00FF88',status:'active',    task:'1 post/day · approval mode'},
   finance:    {sym:'δ',name:'Delta',  role:'Finance & Kill',   color:'#FF4444',status:'monitoring',task:'watching Razorpay'},
   advertising:{sym:'ε',name:'Epsilon',role:'Ad Campaigns',     color:'#FFB800',status:'idle',      task:'no campaigns yet'},
 }}
 
+// Clock + Schedule
 setInterval(()=>{
   const n=new Date()
   document.getElementById('clock').textContent=n.toLocaleTimeString('en-IN',{hour12:false})
-  const n5=new Date(Math.ceil(n/300000)*300000),nh=new Date(Math.ceil(n/3600000)*3600000)
+  // Next 10am IST
+  const istOffset=5.5*60*60*1000
+  const nowIST=new Date(n.getTime()+istOffset)
+  const next10=new Date(nowIST)
+  next10.setHours(10,0,0,0)
+  if(next10<=nowIST) next10.setDate(next10.getDate()+1)
+  const diff=next10-nowIST
+  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000)
   document.getElementById('nextSched').innerHTML=
-    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Realtime</span><span style="font-family:var(--mono)">${n5.toLocaleTimeString('en-IN',{hour12:false})}</span></div>`+
-    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Hourly</span><span style="font-family:var(--mono)">${nh.toLocaleTimeString('en-IN',{hour12:false})}</span></div>`+
-    `<div style="display:flex;justify-content:space-between"><span>Daily posts</span><span style="font-family:var(--mono)">09:00 · 14:00 · 19:00</span></div>`
+    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Daily post (10am IST)</span><span style="font-family:var(--mono)">${h}h ${m}m</span></div>`+
+    `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Hourly revenue check</span><span style="font-family:var(--mono)">${60-new Date().getMinutes()}m</span></div>`+
+    `<div style="display:flex;justify-content:space-between"><span>Weekly research</span><span style="font-family:var(--mono)">Mon 8am</span></div>`
 },1000)
 
-// NAV — always loads data when switching
+// NAV
 function nav(name,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'))
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'))
   document.getElementById('view-'+name).classList.add('active')
   if(btn)btn.classList.add('active')
-  const L={overview:loadOverview,content:loadContent,finance:loadRevenue,decisions:loadDecisions,logs:loadLogs,config:loadConfig}
+  const L={overview:loadOverview,content:loadContent,finance:loadRevenue,decisions:loadDecisions,logs:loadLogs,config:loadConfig,approvals:loadApprovals,platforms:loadPlatformState}
   if(L[name])L[name]()
 }
 
@@ -470,29 +548,31 @@ function handleEv(ev){
   addFeed(ev)
   if(ev.type==='cycle'){S.cycle++;document.getElementById('cycleCount').textContent=`CYCLE #${S.cycle}`;document.getElementById('lastCycle').textContent=`last: ${new Date().toLocaleTimeString('en-IN',{hour12:false})}`}
   if(ev.type==='decision'){const el=document.getElementById('kDecisions');if(el)el.textContent=parseInt(el.textContent||0)+1}
-  if(ev.message&&(ev.message.includes('Published')||ev.message.includes('✅ Posted'))){const el=document.getElementById('kContent');if(el)el.textContent=parseInt(el.textContent||0)+1}
+  if(ev.message&&(ev.message.includes('✅ Posted')||ev.message.includes('Published: linkedin')||ev.message.includes('Published: twitter'))){const el=document.getElementById('kContent');if(el)el.textContent=parseInt(el.textContent||0)+1}
+  if(ev.message&&ev.message.includes('pending approval')){loadPendingCount()}
   Object.entries(S.agents).forEach(([id,a])=>{
     if(ev.message&&(ev.message.includes(`[${id.toUpperCase()}]`)||ev.message.includes(a.name))){
       S.agents[id].status='running';S.agents[id].task=ev.message.replace(/\[.*?\]/,'').trim().slice(0,55);renderCards()
-      setTimeout(()=>{S.agents[id].status=id==='finance'?'monitoring':id==='publisher'?'active':'idle';renderCards()},4000)
+      loadPlatformState()
+setTimeout(()=>{S.agents[id].status=id==='finance'?'monitoring':id==='publisher'?'active':'idle';renderCards()},4000)
     }
   })
 }
 
-// FEED
+// Feed
 const FI={success:'✓',error:'✕',warning:'⚠',info:'→',decision:'◈',task:'⚙',cycle:'↻',loop:'▶',system:'◉'}
 const FC={success:['#00FF88','rgba(0,255,136,.15)'],error:['#FF4444','rgba(255,68,68,.15)'],warning:['#FFB800','rgba(255,184,0,.15)'],info:['#4D9EFF','rgba(77,158,255,.12)'],decision:['#9D7FEA','rgba(157,127,234,.15)'],task:['#7B8699','rgba(123,134,153,.08)'],cycle:['#3D4555','rgba(0,0,0,.1)'],loop:['#4D9EFF','rgba(77,158,255,.12)'],system:['#00FF88','rgba(0,255,136,.15)']}
 function addFeed(ev){
   const feed=document.getElementById('liveFeed')
   const msg=ev.message||(ev.data?JSON.stringify(ev.data).slice(0,80):'')
-  const [ic,bg]=FC[ev.level]||FC.info
+  const[ic,bg]=FC[ev.level]||FC.info
   const time=new Date(ev.ts||Date.now()).toLocaleTimeString('en-IN',{hour12:false})
   const el=document.createElement('div');el.className='fi'
   el.innerHTML=`<div class="fico" style="background:${bg};color:${ic}">${FI[ev.level]||'·'}</div><div><div class="fmsg">${esc(msg)}</div><div class="ftm">${time}</div></div>`
   feed.insertBefore(el,feed.firstChild);if(feed.children.length>100)feed.removeChild(feed.lastChild)
 }
 
-// AGENT CARDS
+// Agent cards
 function renderCards(){
   ['agentCardsMini','agentCardsDetail'].forEach(cid=>{
     const el=document.getElementById(cid);if(!el)return
@@ -501,10 +581,8 @@ function renderCards(){
       const sc=a.status==='running'?a.color:a.status==='monitoring'?'#FFB800':a.status==='active'?'#4D9EFF':'#3D4555'
       const glow=a.status==='running'?`box-shadow:0 0 8px ${a.color}40`:''
       return `<div class="ac ${a.status==='running'?'running':''}" onclick="pickAgent('${id}')">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="asym" style="color:${a.color}">${a.sym}</div>
-          <div style="display:flex;align-items:center;gap:4px"><div class="sd" style="background:${sc};${glow}"></div><span style="font-family:var(--mono);font-size:9px;color:${sc}">${a.status.toUpperCase()}</span></div>
-        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div class="asym" style="color:${a.color}">${a.sym}</div>
+        <div style="display:flex;align-items:center;gap:4px"><div class="sd" style="background:${sc};${glow}"></div><span style="font-family:var(--mono);font-size:9px;color:${sc}">${a.status.toUpperCase()}</span></div></div>
         <div class="aname">${a.name}</div><div class="arole">${a.role}</div>
         <div class="atask">${esc(a.task)}</div>
         ${detail?`<button onclick="event.stopPropagation();trigger('${id}')" style="margin-top:7px;width:100%;padding:5px;background:${a.color}20;border:1px solid ${a.color}40;border-radius:5px;color:${a.color};font-size:10px;cursor:pointer;font-family:var(--mono)">▶ Run</button>`:''}
@@ -514,10 +592,101 @@ function renderCards(){
 }
 function pickAgent(id){const sel=document.getElementById('agentSel');if(!sel)return;const opt=Array.from(sel.options).find(o=>o.value.startsWith(id));if(opt)sel.value=opt.value}
 
-// API FETCH
-async function api(path){try{const r=await fetch(path);if(!r.ok)throw new Error(r.status);return await r.json()}catch{return null}}
+// API
+async function api(path,opts={}){try{const r=await fetch(path,opts);if(!r.ok)throw new Error(r.status);return await r.json()}catch{return null}}
 
-async function loadOverview(){renderCards();renderPlatforms();checkOllama();await Promise.all([loadRevenueChart(),loadLatestDecisions()])}
+async function loadOverview(){renderCards();renderPlatforms();checkOllama();checkApprovalConfig();await Promise.all([loadRevenueChart(),loadLatestDecisions(),loadPendingCount()])}
+
+async function loadPendingCount(){
+  const data=await api('/api/approval/pending')
+  const count=data?.count||0
+  document.getElementById('kPending').textContent=count
+  const badge=document.getElementById('approvalBadge')
+  const sideBadge=document.getElementById('sideApprovalCount')
+  const pendingBadge=document.getElementById('pendingBadge')
+  if(badge){badge.style.display=count>0?'flex':'none';document.getElementById('pendingCount').textContent=count}
+  if(sideBadge){sideBadge.style.display=count>0?'inline':'none';sideBadge.textContent=count}
+  if(pendingBadge)pendingBadge.textContent=`${count} pending`
+}
+
+async function loadApprovals(){
+  await loadPendingCount()
+  const data=await api('/api/approval/pending')
+  const el=document.getElementById('approvalList')
+  if(!data?.approvals?.length){
+    el.innerHTML=`<div class="empty"><div class="ei">📧</div><div class="et">No pending approvals</div><div class="es">Engine will send an email when content is ready for review</div></div>`
+    return
+  }
+  el.innerHTML=data.approvals.map(a=>`
+    <div class="appr-card pending" id="appr-${a._id}">
+      <div class="cf">
+        <span class="appr-badge" style="background:var(--a2);color:var(--amber);border:1px solid rgba(255,184,0,.3)">${a.platform?.toUpperCase()}</span>
+        <span style="font-size:11px;color:var(--text2)">${a.product||'toolifyai'}</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:auto">${new Date(a.createdAt).toLocaleString('en-IN')}</span>
+      </div>
+      <div class="appr-preview">${esc(formatApprovalPreview(a.content,a.platform))}</div>
+      <div class="appr-actions">
+        <button class="appr-btn appr-approve" onclick="approvePost('${a._id}')">✅ Approve &amp; Publish</button>
+        <button class="appr-btn appr-reject"  onclick="rejectPost('${a._id}')">❌ Reject</button>
+      </div>
+    </div>`).join('')
+}
+
+async function loadApprovalHistory(){
+  const data=await api('/api/approval/history')
+  const el=document.getElementById('approvalHistory')
+  if(!data?.length){el.innerHTML=`<div class="empty"><div class="es">No history yet</div></div>`;return}
+  const statusCls={approved:'bg',rejected:'br',auto_approved:'bg',pending:'ba',expired:'bd'}
+  el.innerHTML=`<table><thead><tr><th>PLATFORM</th><th>PRODUCT</th><th>STATUS</th><th>TIME</th></tr></thead><tbody>`+
+    data.map(a=>`<tr>
+      <td>${a.platform}</td><td>${a.product||'—'}</td>
+      <td><span class="b ${statusCls[a.status]||'bd'}">${a.status}</span></td>
+      <td style="font-family:var(--mono);font-size:10px">${new Date(a.createdAt).toLocaleString('en-IN')}</td>
+    </tr>`).join('')+'</tbody></table>'
+}
+
+function formatApprovalPreview(content,platform){
+  try{
+    if(platform==='twitter'&&Array.isArray(content)) return content.slice(0,3).map((t,i)=>`Tweet ${i+1}: ${t}`).join('\n\n')
+    if(platform==='linkedin') return typeof content==='string'?content.slice(0,300):(content?.text||'').slice(0,300)
+    if(platform==='reddit') return `r/${content?.subreddit}\n${content?.title}\n\n${(content?.body||'').slice(0,200)}`
+    return JSON.stringify(content).slice(0,300)
+  }catch{return''}
+}
+
+async function approvePost(id){
+  const r=await api('/api/approval/approve-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})
+  if(r?.ok){
+    addFeed({type:'task',level:'success',message:`✅ Post approved — publishing now`,ts:new Date().toISOString()})
+    document.getElementById(`appr-${id}`)?.remove()
+    loadPendingCount()
+  }
+}
+
+async function rejectPost(id){
+  const r=await api('/api/approval/reject-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})
+  if(r?.ok){
+    addFeed({type:'task',level:'warning',message:`❌ Post rejected — engine will generate new content tomorrow`,ts:new Date().toISOString()})
+    document.getElementById(`appr-${id}`)?.remove()
+    loadPendingCount()
+  }
+}
+
+async function checkApprovalConfig(){
+  const status=await api('/api/engine/status')
+  if(!status)return
+  S.requireApproval=status.requireApproval
+  const emailEl=document.getElementById('cfgApprovalEmail')
+  const autoEl=document.getElementById('cfgAutoApprove')
+  const urlEl=document.getElementById('cfgEngineUrl')
+  const modeEl=document.getElementById('cfgApprovalMode')
+  const displayEl=document.getElementById('approvalEmailDisplay')
+  if(emailEl)emailEl.textContent=status.alertEmail||'not set'
+  if(autoEl)autoEl.textContent=status.autoApproveHours==='0'?'Never (manual only)':`After ${status.autoApproveHours} hour(s)`
+  if(urlEl)urlEl.textContent=window.location.origin
+  if(modeEl)modeEl.textContent=status.requireApproval?'YES — email review':'No — auto-publish'
+  if(displayEl)displayEl.textContent=status.alertEmail||'your email'
+}
 
 async function loadRevenueChart(){
   const data=await api('/api/engine/revenue?days=30')
@@ -533,32 +702,27 @@ async function loadRevenueChart(){
 async function loadRevenue(){
   const data=await api('/api/engine/revenue?days=30')
   const el=document.getElementById('finByProduct'),ft=document.getElementById('finTotal')
-  if(!data||!data.byProduct?.length){if(ft)ft.textContent='₹0';el.innerHTML=`<div class="empty"><div class="es">No revenue yet · Razorpay will track first payment automatically</div></div>`;return}
+  if(!data||!data.byProduct?.length){if(ft)ft.textContent='₹0';el.innerHTML=`<div class="empty"><div class="es">No revenue yet</div></div>`;return}
   if(ft)ft.textContent=`₹${(data.total||0).toFixed(0)}`
   const clr={replydraft:'#4D9EFF',listinglift:'#00FF88',policypal:'#FFB800'}
   el.innerHTML=data.byProduct.map(p=>`<div class="row"><span class="rl">${p._id}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;color:var(--text3)">${p.count} sales</span><span class="rv" style="color:${clr[p._id]||'#9D7FEA'}">₹${p.total.toFixed(0)}</span></div></div>`).join('')
 }
 
 async function loadContent(){
-  const [content,pubs]=await Promise.all([api('/api/engine/content'),api('/api/engine/publishes')])
+  const[content,pubs]=await Promise.all([api('/api/engine/content'),api('/api/engine/publishes')])
   const cl=document.getElementById('contentList'),pl=document.getElementById('publishLog'),pc=document.getElementById('pubCount')
   const icons={reddit:'🔴',twitter:'🐦',linkedin:'💼',multi:'🌐'}
   cl.innerHTML=!content?.length
-    ?`<div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Click ▶ Content to generate your first batch for LinkedIn and Reddit</div></div>`
-    :content.map(c=>`<div class="ci"><div class="cf">${icons[c.platform]||'📄'}<span style="font-size:12px;font-weight:500">${(c.platform||'').toUpperCase()} · ${c.type||''}</span><span class="b ${c.status==='published'?'bg':c.status==='ready'?'bb':'bd'}" style="margin-left:auto">${(c.status||'').toUpperCase()}</span></div><div class="ct">${esc(JSON.stringify(c.content||'').slice(0,140))}...</div><div class="cfoot"><span>${c.product||'general'}</span><span>${new Date(c.createdAt).toLocaleString('en-IN')}</span></div></div>`).join('')
-  if(!pubs?.length){
-    pl.innerHTML=`<div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">LinkedIn is connected ✓<br>Reddit needs 30-day account age</div></div>`
-    if(pc)pc.textContent='0 posts'
-  }else{
-    if(pc)pc.textContent=`${pubs.length} posts`
-    pl.innerHTML=`<table><thead><tr><th>PLATFORM</th><th>CONTENT</th><th>STATUS</th><th>TIME</th></tr></thead><tbody>${pubs.map(p=>`<tr><td>${p.platform}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.content||'')}</td><td><span class="b ${p.status==='success'?'bg':p.status==='simulated'?'ba':'br'}">${p.status}</span></td><td style="font-family:var(--mono);font-size:10px">${new Date(p.createdAt).toLocaleString('en-IN')}</td></tr>`).join('')}</tbody></table>`
-  }
+    ?`<div class="empty"><div class="ei">📝</div><div class="et">No content yet</div><div class="es">Engine posts once per day at 10am IST</div></div>`
+    :content.map(c=>`<div class="ci"><div class="cf">${icons[c.platform]||'📄'}<span style="font-size:12px;font-weight:500">${(c.platform||'').toUpperCase()} · ${c.type||''}</span><span class="b ${c.status==='published'?'bg':c.status==='pending_approval'?'ba':c.status==='ready'?'bb':'bd'}" style="margin-left:auto">${c.status==='pending_approval'?'⏳ AWAITING REVIEW':(c.status||'').toUpperCase()}</span></div><div class="ct">${esc(JSON.stringify(c.content||'').slice(0,140))}...</div><div class="cfoot"><span>${c.product||'general'}</span><span>${new Date(c.createdAt).toLocaleString('en-IN')}</span></div></div>`).join('')
+  if(!pubs?.length){pl.innerHTML=`<div class="empty"><div class="ei">🚀</div><div class="et">Nothing published yet</div><div class="es">Posts appear here after approval</div></div>`;if(pc)pc.textContent='0 posts'}
+  else{if(pc)pc.textContent=`${pubs.length} posts`;pl.innerHTML=`<table><thead><tr><th>PLATFORM</th><th>CONTENT</th><th>STATUS</th><th>TIME</th></tr></thead><tbody>${pubs.map(p=>`<tr><td>${p.platform}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.content||'')}</td><td><span class="b ${p.status==='success'?'bg':p.status==='simulated'?'ba':'br'}">${p.status}</span></td><td style="font-family:var(--mono);font-size:10px">${new Date(p.createdAt).toLocaleString('en-IN')}</td></tr>`).join('')}</tbody></table>`}
 }
 
 async function loadDecisions(){
   const data=await api('/api/engine/decisions')
   const el=document.getElementById('decisionsList'),ld=document.getElementById('latestDecisions')
-  const empty=`<div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div><div class="es">Run a daily loop or trigger Finance agent</div></div>`
+  const empty=`<div class="empty"><div class="ei">🧠</div><div class="et">No decisions yet</div></div>`
   if(!data?.length){if(el)el.innerHTML=empty;if(ld)ld.innerHTML=empty;return}
   const kd=document.getElementById('kDecisions');if(kd)kd.textContent=data.length
   const html=data.slice(0,30).map(d=>`<div style="padding:11px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="b bb">AI</span><span style="font-size:12px;font-weight:500;color:var(--text)">${esc(d.action||'Strategic decision')}</span><span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto">${new Date(d.createdAt).toLocaleString('en-IN')}</span></div><div style="font-size:11px;color:var(--text2);line-height:1.5">${esc(d.reasoning||'')}</div><div style="margin-top:5px"><span class="b ${d.outcome==='executed'?'bg':d.outcome==='failed'?'br':'bd'}">${d.outcome||'pending'}</span></div></div>`).join('')
@@ -570,7 +734,7 @@ async function loadLatestDecisions(){await loadDecisions()}
 async function loadLogs(){
   const data=await api('/api/engine/logs')
   const el=document.getElementById('logsList'),lc=document.getElementById('logCount')
-  if(!data?.length){el.innerHTML=`<div class="empty"><div class="es">No logs yet — run any agent to start generating logs</div></div>`;if(lc)lc.textContent='0 entries';return}
+  if(!data?.length){el.innerHTML=`<div class="empty"><div class="es">No logs yet</div></div>`;if(lc)lc.textContent='0 entries';return}
   if(lc)lc.textContent=`${data.length} entries`
   const lc2={success:'var(--green)',error:'var(--red)',warning:'var(--amber)',info:'var(--blue)'}
   el.innerHTML=data.map(l=>`<div style="display:flex;gap:9px;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:${lc2[l.level]||'var(--text3)'};flex-shrink:0;width:55px">[${l.agent}]</span><span style="color:var(--text3);flex-shrink:0;width:110px">${l.task||''}</span><span style="color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.message||l.result||'ok')}</span><span style="color:var(--text3);flex-shrink:0;font-size:9px">${new Date(l.createdAt).toLocaleTimeString('en-IN',{hour12:false})}</span></div>`).join('')
@@ -580,149 +744,85 @@ function renderPlatforms(){
   document.getElementById('platformActivity').innerHTML=[
     {e:'🔴',n:'Reddit',  p:0,s:'wait 30d',  c:'ba'},
     {e:'💼',n:'LinkedIn',p:0,s:'connected ✓',c:'bg'},
-    {e:'🐦',n:'Twitter', p:0,s:'not setup',  c:'bd'},
-  ].map(p=>`<div class="row"><div style="display:flex;align-items:center;gap:7px">${p.e} ${p.n}</div><div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;color:var(--text3)">${p.p} posts</span><span class="b ${p.c}">${p.s}</span></div></div>`).join('')
+    {e:'🐦',n:'Twitter', p:0,s:'configured', c:'bb'},
+  ].map(p=>`<div class="row"><div style="display:flex;align-items:center;gap:7px">${p.e} ${p.n}</div><div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;color:var(--text3)">${p.p} posts today</span><span class="b ${p.c}">${p.s}</span></div></div>`).join('')
 }
 
 async function checkOllama(){
-  try{
-    const d=await api('/api/engine/status')
-    const el=document.getElementById('ollamaStatus')
-    if(el)el.innerHTML=d?.aiProvider==='ollama'?'<span style="color:var(--green)">⚡ Ollama online · llama3.2</span>':'<span style="color:var(--amber)">☁ Using Anthropic</span>'
-  }catch{
-    const el=document.getElementById('ollamaStatus');if(el)el.innerHTML='<span style="color:var(--red)">⚠ Check: ollama serve</span>'
-  }
+  const d=await api('/api/engine/status')
+  const el=document.getElementById('ollamaStatus')
+  if(el)el.innerHTML=d?.aiProvider==='ollama'?'<span style="color:var(--green)">⚡ Ollama online · llama3.2</span>':'<span style="color:var(--amber)">☁ Using Anthropic</span>'
 }
 
 function loadConfig(){
   const creds=[
     {k:'MongoDB Atlas',  ok:true, n:'Connected ✓'},
     {k:'Ollama (local)', ok:null, n:'Free · llama3.2'},
-    {k:'Razorpay',       ok:false,n:'Add RAZORPAY_KEY_ID to .env'},
+    {k:'Razorpay',       ok:true, n:'Test mode — switch to live for real payments'},
     {k:'LinkedIn',       ok:true, n:'Personal profile posting active'},
+    {k:'Twitter/X',      ok:null, n:'Regenerate ACCESS_TOKEN if not working'},
     {k:'Reddit',         ok:false,n:'Wait 30 days account age'},
-    {k:'Twitter/X',      ok:false,n:'Apply at developer.twitter.com'},
-    {k:'Email (Resend)', ok:false,n:'Optional — add RESEND_API_KEY for alerts'},
+    {k:'Email (Resend)', ok:true, n:'Approval emails configured'},
   ]
   document.getElementById('credStatus').innerHTML=creds.map(c=>`<div class="row"><span class="rl" style="font-family:var(--mono);font-size:11px">${c.k}</span><div style="display:flex;align-items:center;gap:7px"><span class="b ${c.ok===true?'bg':c.ok===false?'br':'ba'}">${c.ok===true?'✓ ok':c.ok===false?'✗ missing':'? check'}</span><span style="font-size:10px;color:var(--text3)">${c.n}</span></div></div>`).join('')
-  const steps=[
-    {done:true, t:'MongoDB Atlas connected'},
-    {done:true, t:'LinkedIn personal profile posting connected'},
-    {done:true, t:'Ollama running with llama3.2 (free AI — zero cost)'},
-    {done:false,t:'Add Razorpay keys → razorpay.com → Settings → API Keys'},
-    {done:false,t:'Wait 30 days → add Reddit API credentials for auto-posting'},
-    {done:false,t:'Run: pm2 start ecosystem.config.js to run 24/7 on VPS'},
-    {done:false,t:'Run node linkedin-auth.js every 60 days to refresh token'},
-  ]
-  document.getElementById('setupSteps').innerHTML=steps.map(s=>`<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border)"><div style="width:17px;height:17px;border-radius:50%;background:${s.done?'var(--g2)':'var(--panel2)'};border:1px solid ${s.done?'rgba(0,255,136,.3)':'var(--border)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:${s.done?'var(--green)':'var(--text3)'};margin-top:1px">${s.done?'✓':'○'}</div><div style="font-size:12px;color:${s.done?'var(--text2)':'var(--text)'}">${s.t}</div></div>`).join('')
-  checkOllama()
+  checkApprovalConfig()
 }
 
-// TRIGGERS
-async function trigger(agent,task,params={}){
-  if(agent==='content'&&task==='generateDailyContent'){
-    const topics=getTopicTags()
-    if(topics.length===1){
-      params.topic=topics[0]
-    } else if(topics.length>1){
-      params.topic=topics
-    }
-    const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
-    if(imagePromptValue)params.imagePrompt=imagePromptValue
-  }
-
+// Actions
+async function trigger(agent,task){
   addFeed({type:'task',level:'info',message:`[MANUAL] → ${agent}.${task||''}`,ts:new Date().toISOString()})
   try{
-    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task:task||'trendResearch',params})})
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task:task||'trendResearch'})})
     const d=await r.json()
     addFeed({type:'task',level:'success',message:`Started: ${d.message||'ok'}`,ts:new Date().toISOString()})
   }catch{addFeed({type:'error',level:'warning',message:'Engine unreachable — run: npm run dev',ts:new Date().toISOString()})}
 }
 
+async function triggerNow(){
+  addFeed({type:'loop',level:'info',message:'📧 Generating post and sending for email approval...',ts:new Date().toISOString()})
+  try{
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent:'engine',task:'immediatePost'})})
+    const d=await r.json()
+    addFeed({type:'task',level:'success',message:d.message||'Triggered',ts:new Date().toISOString()})
+    setTimeout(()=>loadPendingCount(),5000)
+  }catch{addFeed({type:'error',level:'warning',message:'Engine unreachable',ts:new Date().toISOString()})}
+}
+
+async function forcePost(){
+  if(!confirm('Force post bypasses the daily limit and email approval. Post immediately?'))return
+  addFeed({type:'loop',level:'info',message:'⚡ Force posting — bypassing approval and daily limit...',ts:new Date().toISOString()})
+  try{
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent:'engine',task:'forcePost'})})
+    const d=await r.json()
+    addFeed({type:'task',level:'success',message:d.message||'Force post triggered',ts:new Date().toISOString()})
+  }catch{addFeed({type:'error',level:'warning',message:'Engine unreachable',ts:new Date().toISOString()})}
+}
+
 async function runAgent(){
   const sel=document.getElementById('agentSel'),[agent,task]=(sel?.value||'research|trendResearch').split('|')
-  const params={}
-  if(agent==='content'&&task==='generateDailyContent'){
-    const topics=getTopicTags()
-    if(topics.length===1){
-      params.topic=topics[0]
-    } else if(topics.length>1){
-      params.topic=topics
-    }
-    const imagePromptValue=document.getElementById('imagePrompt')?.value?.trim()
-    if(imagePromptValue)params.imagePrompt=imagePromptValue
-  }
   const term=document.getElementById('agentTerm'),stat=document.getElementById('agentRunSt')
   term.innerHTML=`<span style="color:var(--text3)">$ executing ${agent}.${task}...\n</span>`
   stat.textContent='running...';stat.style.color='var(--amber)'
   try{
-    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task,params})})
+    const r=await fetch('/api/engine/trigger',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,task})})
     const d=await r.json()
-    term.innerHTML+=`<span style="color:var(--green)">✓ ${d.message||'triggered'}\n</span><span style="color:var(--text3)">Output streams in the live feed →</span>`
+    term.innerHTML+=`<span style="color:var(--green)">✓ ${d.message||'triggered'}\n</span><span style="color:var(--text3)">Watch live feed →</span>`
     stat.textContent='triggered';stat.style.color='var(--green)'
   }catch{
-    term.innerHTML+=`<span style="color:var(--red)">✕ Cannot reach engine\nStart it: npm run dev</span>`
+    term.innerHTML+=`<span style="color:var(--red)">✕ Cannot reach engine\nStart: npm run dev</span>`
     stat.textContent='error';stat.style.color='var(--red)'
   }
 }
-
-function addTopicTag(value){
-  const raw = String(value || '').split(',').map(t=>t.trim()).filter(Boolean)
-  if(!raw.length)return
-  const container = document.getElementById('topicTags')
-  const existing = Array.from(container.querySelectorAll('.topic-tag')).map(el=>el.dataset.topic)
-  raw.forEach(tag=>{
-    if(existing.includes(tag))return
-    const pill = document.createElement('span')
-    pill.className = 'topic-tag'
-    pill.dataset.topic = tag
-    pill.appendChild(document.createTextNode(tag))
-    const removeBtn = document.createElement('button')
-    removeBtn.type = 'button'
-    removeBtn.textContent = '×'
-    removeBtn.addEventListener('click', () => pill.remove())
-    pill.appendChild(removeBtn)
-    container.appendChild(pill)
-  })
-}
-
-function removeTopicTag(tag){
-  const container = document.getElementById('topicTags')
-  const node = container.querySelector(`.topic-tag[data-topic="${tag}"]`)
-  if(node)node.remove()
-}
-
-function getTopicTags(){
-  const container = document.getElementById('topicTags')
-  const tags = Array.from(container.querySelectorAll('.topic-tag')).map(el=>el.dataset.topic.trim()).filter(Boolean)
-  const rawValue = document.getElementById('contentTopic')?.value?.trim() || ''
-  const extra = rawValue.split(',').map(t=>t.trim()).filter(Boolean)
-  return [...tags, ...extra].filter((t,i,arr)=>t && arr.indexOf(t)===i)
-}
-
-function initTopicInput(){
-  const input = document.getElementById('contentTopic')
-  if(!input) return
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ',') {
-      event.preventDefault()
-      addTopicTag(input.value)
-      input.value = ''
-    }
-  })
-}
-
-initTopicInput()
 
 function setProvider(p){
   S.provider=p
   document.getElementById('bollo').style.cssText=`flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:${p==='ollama'?'var(--purple)':'transparent'};color:${p==='ollama'?'#fff':'var(--text3)'}`
   document.getElementById('banth').style.cssText=`flex:1;padding:5px;border-radius:4px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;transition:all .15s;background:${p==='anthropic'?'#4D9EFF':'transparent'};color:${p==='anthropic'?'#fff':'var(--text3)'}`
-  addFeed({type:'system',level:'info',message:`AI provider switched to: ${p}`,ts:new Date().toISOString()})
+  addFeed({type:'system',level:'info',message:`AI provider: ${p}`,ts:new Date().toISOString()})
 }
 
 function emergencyStop(){
-  if(!confirm('Stop all autonomous agents?'))return
+  if(!confirm('Stop all agents?'))return
   addFeed({type:'error',level:'error',message:'⬛ EMERGENCY STOP — all agents paused',ts:new Date().toISOString()})
   const ep=document.getElementById('ep'),est=document.getElementById('est')
   if(ep){ep.style.animation='none';ep.style.background='var(--red)'}
@@ -734,16 +834,42 @@ function emergencyStop(){
 function setBadge(id,text,cls){const el=document.getElementById(id);if(el){el.textContent=text;el.className=`b ${cls}`}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-// INIT
+// Platform toggles
+async function loadPlatformState(){
+  const data=await api('/api/platforms')
+  if(!data)return
+  const state=data.platforms
+  const cfg=data.configured
+  ;['linkedin','twitter','reddit','linkedinReply'].forEach(p=>{
+    const el=document.getElementById('toggle-'+p)
+    if(el)el.checked=!!state[p]
+  })
+  // Update status text
+  const liTxt=document.getElementById('li-status-text')
+  const twTxt=document.getElementById('tw-status-text')
+  const rdTxt=document.getElementById('rd-status-text')
+  if(liTxt)liTxt.textContent=cfg?.linkedin?'Personal profile · 1 post/day':'Not configured — run linkedin-auth.js'
+  if(twTxt)twTxt.textContent=cfg?.twitter?'OAuth 1.0a configured · thread posting':'Not configured — check .env'
+  if(rdTxt)rdTxt.textContent=cfg?.reddit?'Credentials set · ready to post':'Waiting for 30-day account age'
+}
+
+async function setPlatform(name,enabled){
+  addFeed({type:'system',level:'info',message:`Platform ${name} → ${enabled?'ON ✓':'OFF ✗'}`,ts:new Date().toISOString()})
+  await api('/api/platforms/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({enabled})})
+}
+
+// Init
 renderCards();renderPlatforms();connectSSE();loadOverview()
+setInterval(loadPendingCount, 30000) // check pending approvals every 30s
+
 setTimeout(()=>{
-  [{type:'system',level:'success',message:'Engine connected · MongoDB Atlas online'},
-   {type:'system',level:'success',message:'LinkedIn token valid · personal profile posting ready'},
-   {type:'task',  level:'info',   message:'[FINANCE] Watching Razorpay for new payments...'},
-   {type:'task',  level:'info',   message:'[PUBLISHER] Monitoring LinkedIn for mentions...'},
-   {type:'task',  level:'warning',message:'[REDDIT] Add credentials to .env after 30-day account age'},
+  [{type:'system',level:'success',message:'Engine connected · 1 post/day mode active'},
+   {type:'system',level:'success',message:'Approval mode: email review before every post'},
+   {type:'system',level:'success',message:'LinkedIn token valid · Twitter OAuth 1.0a configured'},
+   {type:'task',  level:'info',   message:'[FINANCE] Watching Razorpay for payments...'},
+   {type:'task',  level:'warning',message:'[REDDIT] Waiting for 30-day account age'},
   ].forEach((ev,i)=>setTimeout(()=>addFeed({...ev,ts:new Date().toISOString()}),i*700))
-},900)
+},800)
 </script>
 </body>
 </html>

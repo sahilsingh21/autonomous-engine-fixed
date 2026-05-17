@@ -1,11 +1,10 @@
 /**
  * ALL MONGODB MODELS — TOOLIFY AI ENGINE
- * Single file, all schemas, all exports
+ * Added: Approval model for human review system
  */
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 
-// ── Decision
 const DecisionSchema = new Schema({
   action:    String,
   reasoning: String,
@@ -14,7 +13,6 @@ const DecisionSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 })
 
-// ── Task
 const TaskSchema = new Schema({
   agent:     String,
   method:    String,
@@ -24,19 +22,17 @@ const TaskSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 })
 
-// ── Revenue — Razorpay payments
 const RevenueSchema = new Schema({
-  amount:      Number,
-  currency:    { type: String, default: 'INR' },
-  product:     String,
-  razorpayId:  { type: String, unique: true, sparse: true }, // was stripeId
-  stripeId:    { type: String, sparse: true },               // kept for migration
-  orderId:     String,
-  date:        { type: Date, default: Date.now },
-  createdAt:   { type: Date, default: Date.now }
+  amount:     Number,
+  currency:   { type: String, default: 'INR' },
+  product:    String,
+  razorpayId: { type: String, unique: true, sparse: true },
+  stripeId:   { type: String, sparse: true },
+  orderId:    String,
+  date:       { type: Date, default: Date.now },
+  createdAt:  { type: Date, default: Date.now }
 })
 
-// ── Content
 const ContentSchema = new Schema({
   type:           String,
   product:        String,
@@ -48,28 +44,25 @@ const ContentSchema = new Schema({
   createdAt:      { type: Date, default: Date.now }
 })
 
-// ── AgentLog
 const AgentLogSchema = new Schema({
   agent:     String,
   task:      String,
-  level:     { type: String, enum: ['info', 'success', 'warning', 'error'], default: 'info' },
+  level:     { type: String, enum: ['info','success','warning','error'], default: 'info' },
   message:   String,
   result:    String,
   createdAt: { type: Date, default: Date.now }
 })
 
-// ── PublishLog
 const PublishLogSchema = new Schema({
-  platform:  String,
-  content:   String,
-  url:       String,
-  status:    String,
-  error:     String,
+  platform:   String,
+  content:    String,
+  url:        String,
+  status:     String,
+  error:      String,
   engagement: Schema.Types.Mixed,
-  createdAt: { type: Date, default: Date.now }
+  createdAt:  { type: Date, default: Date.now }
 })
 
-// ── ResearchResult
 const ResearchResultSchema = new Schema({
   type:      String,
   data:      Schema.Types.Mixed,
@@ -77,7 +70,6 @@ const ResearchResultSchema = new Schema({
   date:      { type: Date, default: Date.now }
 })
 
-// ── AdCampaign
 const AdCampaignSchema = new Schema({
   name:        String,
   platform:    String,
@@ -93,7 +85,6 @@ const AdCampaignSchema = new Schema({
   createdAt:   { type: Date, default: Date.now }
 })
 
-// ── User (for product access tracking)
 const UserSchema = new Schema({
   email:      { type: String, unique: true },
   name:       String,
@@ -103,7 +94,28 @@ const UserSchema = new Schema({
   createdAt:  { type: Date, default: Date.now }
 })
 
-// Register models (guard against re-registration in dev)
+// ── NEW: Approval model for human review system
+const ApprovalSchema = new Schema({
+  platform:      { type: String, enum: ['linkedin', 'twitter', 'reddit'], required: true },
+  product:       String,
+  content:       Schema.Types.Mixed,   // full content object
+  approveToken:  { type: String, unique: true },
+  rejectToken:   { type: String, unique: true },
+  status:        { type: String, enum: ['pending','approved','rejected','auto_approved','expired'], default: 'pending' },
+  reviewedAt:    Date,
+  expiresAt:     Date,  // null = never auto-approve
+  emailSent:     { type: Boolean, default: false },
+  createdAt:     { type: Date, default: Date.now }
+})
+
+// Index for fast token lookups
+ApprovalSchema.index({ approveToken: 1 })
+ApprovalSchema.index({ rejectToken:  1 })
+ApprovalSchema.index({ status: 1, createdAt: -1 })
+
+// Auto-expire old pending approvals after 7 days
+ApprovalSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 })
+
 const m = (name, schema) => mongoose.models[name] || mongoose.model(name, schema)
 
 module.exports = {
@@ -116,4 +128,5 @@ module.exports = {
   ResearchResult: m('ResearchResult', ResearchResultSchema),
   AdCampaign:     m('AdCampaign',     AdCampaignSchema),
   User:           m('User',           UserSchema),
+  Approval:       m('Approval',       ApprovalSchema),
 }

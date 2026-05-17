@@ -7,28 +7,26 @@
  *  4. All AI calls wrapped in try/catch with hardcoded fallbacks
  */
 
-const https = require('https')
-const axios = require('axios')
 const { Content } = require('../models')
 
 const PRODUCTS = [
   {
     id: 'replydraft', name: 'ReplyDraft AI', price: '₹750/mo',
-    url:    process.env.REPLYDRAFT_URL || 'https://toolifyai.com/replydraft',
+    url:    process.env.REPLYDRAFT_URL || 'http://toolifysahilsingh.co.in/replydraft',
     pain:   'writing professional replies to client emails and LinkedIn messages',
     target: 'freelancers, consultants, VAs, and remote workers in India',
     sub:    'freelance',
   },
   {
     id: 'listinglift', name: 'ListingLift AI', price: '₹249/batch',
-    url:    process.env.LISTINGLIFT_URL || 'https://toolifyai.com/listinglift',
+    url:    process.env.LISTINGLIFT_URL || 'http://toolify.sahilsingh.co.in/listinglift',
     pain:   'writing product listings for Amazon, Flipkart, Etsy, Shopify',
     target: 'online sellers, Etsy shop owners, D2C brands in India',
     sub:    'Etsy',
   },
   {
     id: 'policypal', name: 'PolicyPal AI', price: '₹399/doc',
-    url:    process.env.POLICYPAL_URL || 'https://toolifyai.com/policypal',
+    url:    process.env.POLICYPAL_URL || 'http://toolify.sahilsingh.co.in/policypal',
     pain:   'understanding Terms of Service and Privacy Policy documents',
     target: 'individuals, small businesses, and startup founders',
     sub:    'smallbusiness',
@@ -85,34 +83,6 @@ I built ReplyDraft AI to fix this:
 Link in comments if you want to try it.
 
 #Freelance #Productivity #ToolifyAI`,
-  `Software founders: the AI stack you build today is the product edge you sell tomorrow.
-
-I spend mornings designing the workflow, afternoons tuning prompts, and evenings checking that the automated engine still posts smart content.
-
-Toolify AI isn't just a product — it's a system that learns what founders care about:
-→ faster replies for freelancers
-→ better marketplace listings for sellers
-→ simpler policy summaries for startup teams
-
-The work is repetitive. The value is in making it feel effortless.
-
-If you build SaaS in India, think about the automation behind the scenes, not just the landing page.
-
-#ToolifyAI #SaaSIndia`,
-  `Every AI post I write starts with one question: what would make someone stop scrolling?
-
-For Toolify AI, that means talking about real pain:
-- client emails that take hours
-- marketplace listings that feel copy-pasted
-- policies that are impossible to understand
-
-Then I make the solution tangible with one small founder insight.
-
-A good SaaS post isn't a product pitch — it's a story that explains why the product exists.
-
-Building in public with AI means I can share both the wins and the work.
-
-#FounderLife #AI`,
 ]
 
 const FALLBACK_TWEETS = [
@@ -124,7 +94,7 @@ const FALLBACK_TWEETS = [
     'δ Finance Agent tracks Razorpay payments\nAuto-kills products with 0 revenue after 3 days',
     'ε Optimizer Agent runs A/B tests\nPricing, headlines, landing pages',
     '3 products live:\n✍️ ReplyDraft AI (₹750/mo)\n🛒 ListingLift AI (₹249)\n🔍 PolicyPal AI (₹399)\n\nAll for Indian freelancers and sellers.',
-    'Still at ₹0 MRR. But the machine is running.\n\nBuilding in public → toolifyai.com\n\n#ToolifyAI #BuildingInPublic #IndieHacker',
+    'Still at ₹0 MRR. But the machine is running.\n\nBuilding in public → toolify.sahilsingh.co.in\n\n#ToolifyAI #BuildingInPublic #IndieHacker',
   ],
   [
     'Running Ollama locally changed everything for my SaaS 🔥\n\nHere\'s what changed 👇',
@@ -159,7 +129,7 @@ Anyone else doing something similar? What's your workflow for handling client co
 *(I ended up building a Chrome extension for this — ReplyDraft AI — if you want to try it, happy to share the link)*`,
     subreddit: 'freelance',
     mentionProduct: true,
-    productMentionText: 'PS: The tool I mentioned is ReplyDraft AI — free trial available at toolifyai.com',
+    productMentionText: 'PS: The tool I mentioned is ReplyDraft AI — free trial available at toolify.sahilsingh.co.in',
   },
   listinglift: {
     title: 'Stop writing marketplace listings from scratch — my time-saving process',
@@ -184,7 +154,7 @@ The key differences per platform that the AI handles:
 Anyone have tips for standing out in saturated categories?`,
     subreddit: 'Etsy',
     mentionProduct: true,
-    productMentionText: 'PS: I use ListingLift AI for this — toolifyai.com',
+    productMentionText: 'PS: I use ListingLift AI for this — toolify.sahilsingh.co.in',
   },
   policypal: {
     title: 'Always check the ToS before you sign up — a reminder',
@@ -207,7 +177,7 @@ I now paste them into an AI and ask for a plain-English summary with risk flags 
 What's the worst ToS clause you've ever found hiding in the fine print?`,
     subreddit: 'smallbusiness',
     mentionProduct: true,
-    productMentionText: 'PS: I use PolicyPal AI for ToS summaries — toolifyai.com',
+    productMentionText: 'PS: I use PolicyPal AI for ToS summaries — toolify.sahilsingh.co.in',
   },
 }
 
@@ -223,50 +193,29 @@ class ContentAgent {
   }
 
   // ── DAILY: generate full content batch
-  async generateDailyContent({ research, decision, topic, imagePrompt } = {}) {
+  async generateDailyContent({ research, decision } = {}) {
     this.orchestrator.broadcast({ type: 'task', message: '[CONTENT] Generating daily content batch...', level: 'info' })
-    this.orchestrator.broadcast({ type: 'task', message: `[CONTENT] Params: topic=${topic}, imagePrompt=${imagePrompt?.slice(0,50)}`, level: 'info' })
     this.postCount++
 
-    if (!research) {
-      research = await this.orchestrator.runTask('research', 'trendResearch', { silent: true }) || {}
-    }
-
-    const product     = this.selectProduct(decision)
-    const angle       = this.pickContentAngle(research, topic)
-    const imagePromptText = imagePrompt?.trim() || `A high quality social media marketing image for ${product.name} about ${angle}. Bright, modern, minimal, professional style with an Indian startup founder vibe.`
-    const image       = await this.generateHuggingFaceImage(imagePromptText).catch(() => null)
+    const product = this.selectProduct(decision)
+    const angle   = research?.contentAngles?.[0] || 'saving time on client communication'
 
     // Run all in parallel — each has its own fallback
     const [reddit, twitter, linkedin, blog] = await Promise.allSettled([
       this.generateRedditPost(product, angle, research),
       this.generateTwitterThread(product, angle),
       this.generateLinkedInPost(product, angle),
-      this.generateBlogOutline(product, angle), 
+      this.generateBlogOutline(product, angle),
     ])
-
-    let linkedinPayload = linkedin.value
-    if (typeof linkedinPayload === 'string') {
-      linkedinPayload = { text: linkedinPayload, platform: 'linkedin', product: product.id }
-    }
-    if (!linkedinPayload || typeof linkedinPayload !== 'object') {
-      linkedinPayload = { text: FALLBACK_LINKEDIN[this.postCount % FALLBACK_LINKEDIN.length], platform: 'linkedin', product: product.id }
-    }
-
-    const imagePayload = image ? { data: image, alt: `Generated image for ${product.name}`, title: `${product.name} social creative`, prompt: imagePromptText } : null
-    if (imagePayload) {
-      linkedinPayload.image = imagePayload
-    }
 
     const batch = {
       product:  product.id,
       date:     new Date(),
       reddit:   reddit.value   || FALLBACK_REDDIT[product.id] || FALLBACK_REDDIT.replydraft,
       twitter:  twitter.value  || FALLBACK_TWEETS[this.postCount % FALLBACK_TWEETS.length],
-      linkedin: linkedinPayload,
+      linkedin: linkedin.value || { text: FALLBACK_LINKEDIN[this.postCount % FALLBACK_LINKEDIN.length], platform: 'linkedin', product: product.id },
       blog:     blog.value     || null,
       angle,
-      image:    imagePayload,
     }
 
     // Ensure linkedin always has content
@@ -312,7 +261,6 @@ Content angle: ${angle}
 Rules:
 - Genuine helpful content FIRST — not promotional
 - Write like a real community member
-- Use fresh research and keep the post unique
 - Only mention the product briefly at the END if it fits
 - Hook title that gets upvotes
 - 3-5 actionable tips in the body
@@ -344,7 +292,6 @@ Rules:
 - Tweets 2-5: genuine tips — real value, not sales
 - Tweet 6: mention building ${product.name} to solve this
 - Tweet 7: soft CTA + #ToolifyAI #BuildingInPublic
-- Use fresh research and avoid repeating old posts
 - Each tweet under 270 chars
 - Sound like a real founder, not a brand
 
@@ -363,28 +310,23 @@ Return JSON array ONLY: ["tweet1","tweet2","tweet3","tweet4","tweet5","tweet6","
   // ── LinkedIn post — always returns something
   async generateLinkedInPost(product, angle) {
     const fallback = {
-      text: FALLBACK_LINKEDIN[Math.floor(Math.random() * FALLBACK_LINKEDIN.length)],
+      text: FALLBACK_LINKEDIN[this.postCount % FALLBACK_LINKEDIN.length],
       platform: 'linkedin',
       product: product.id
     }
 
-    const prompt = `Write a unique, high-energy LinkedIn post (180-250 words) from the founder of Toolify AI.
+    const prompt = `Write a LinkedIn post (180-250 words) from a founder building Toolify AI in India.
 
 Topic: ${angle}
-Product: ${product.name} — solves: ${product.pain}
-Target: ${product.target}
-
-Focus on software, AI, SaaS, or founder lessons. Make the post feel modern, interesting, and worth reading for people in tech.
+Related product: ${product.name} — solves: ${product.pain}
 
 Style:
-- Start with a strong hook, question, or surprising observation
-- Use one short story, example, or real founder insight
-- Include 3 fresh takeaways about AI, automation, product building, or startup growth
-- Keep it personal and conversational — not a product pitch
-- Mention Toolify AI naturally in the story
-- End with a strong closing line and a soft comment CTA
-- Use no more than 2 hashtags from: #ToolifyAI #AI #SaaSIndia #FounderLife #Productivity
-- Avoid repetitive phrasing and avoid reusing exact sentences from past posts
+- Personal observation or story — NOT a press release
+- Hook first line (no "I'm excited to announce")
+- 3-4 real insights
+- Mention building Toolify AI naturally
+- End: "Toolify AI helps ${product.target}. Link in comments."
+- Max 2 hashtags: #ToolifyAI #BuildingInPublic
 
 Write the post text directly. No JSON. Just the post.`
 
@@ -408,167 +350,6 @@ Return JSON: {"title":"","primaryKeyword":"","sections":[{"h2":"","points":[""]}
       const res = await this.orchestrator.callAI(prompt)
       return this.orchestrator.parseJSON(res)
     } catch { return null }
-  }
-
-  async generateHuggingFaceImage(prompt) {
-    // Try Replicate first
-    try {
-      const replicateResult = await this.generateReplicateImage(prompt)
-      if (replicateResult) return replicateResult
-    } catch (err) {
-      console.log('Replicate failed, trying free alternative:', err.message)
-    }
-
-    // Fallback to free Unsplash API
-    return this.generateUnsplashImage(prompt)
-  }
-
-  async generateReplicateImage(prompt) {
-    const apiToken = process.env.REPLICATE_API_TOKEN
-    if (!apiToken) return null
-
-    const model = process.env.REPLICATE_MODEL || 'stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf'
-    const [modelName, version] = model.split(':')
-
-    const body = JSON.stringify({
-      version: version,
-      input: {
-        prompt: prompt,
-        width: 512,
-        height: 512,
-        num_inference_steps: 20,
-        guidance_scale: 7.5
-      }
-    })
-
-    return new Promise((resolve, reject) => {
-      const req = https.request({
-        hostname: 'api.replicate.com',
-        path: '/v1/predictions',
-        method: 'POST',
-        headers: {
-          Authorization: `Token ${apiToken}`,
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body)
-        },
-        timeout: 120000,
-      }, (res) => {
-        const chunks = []
-        res.on('data', (chunk) => chunks.push(chunk))
-        res.on('end', () => {
-          const buffer = Buffer.concat(chunks)
-          const contentType = res.headers['content-type'] || ''
-
-          if (contentType.includes('application/json')) {
-            try {
-              const json = JSON.parse(buffer.toString('utf8'))
-              if (json.error) {
-                return reject(new Error(json.error))
-              }
-              if (json.id) {
-                this.pollReplicatePrediction(json.id, apiToken).then(resolve).catch(reject)
-              } else {
-                reject(new Error('No prediction ID received from Replicate'))
-              }
-            } catch {
-              return reject(new Error('Unexpected Replicate JSON response'))
-            }
-          } else {
-            reject(new Error(`Unexpected Replicate response content-type: ${contentType}`))
-          }
-        })
-      })
-
-      req.on('error', reject)
-      req.on('timeout', () => { req.destroy(); reject(new Error('Replicate request timed out')) })
-      req.write(body)
-      req.end()
-    })
-  }
-
-  async generateUnsplashImage(prompt) {
-    // Use Lorem Picsum for free placeholder images (no API key required)
-    try {
-      // Generate a random image based on prompt hash for consistency
-      const hash = require('crypto').createHash('md5').update(prompt).digest('hex')
-      const seed = parseInt(hash.substring(0, 8), 16) % 1000
-
-      const imageUrl = `https://picsum.photos/800/600?random=${seed}`
-
-      // Download the image
-      const imageResponse = await axios.get(imageUrl, {
-        responseType: 'arraybuffer',
-        timeout: 15000
-      })
-
-      const base64 = Buffer.from(imageResponse.data).toString('base64')
-      const contentType = imageResponse.headers['content-type'] || 'image/jpeg'
-
-      return `data:${contentType};base64,${base64}`
-    } catch (err) {
-      console.log('Lorem Picsum fallback failed:', err.message)
-    }
-
-    // Ultimate fallback - return null so it posts text only
-    return null
-  }
-
-  async pollReplicatePrediction(predictionId, apiToken) {
-    return new Promise((resolve, reject) => {
-      const poll = () => {
-        const req = https.request({
-          hostname: 'api.replicate.com',
-          path: `/v1/predictions/${predictionId}`,
-          method: 'GET',
-          headers: {
-            Authorization: `Token ${apiToken}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 30000,
-        }, (res) => {
-          const chunks = []
-          res.on('data', (chunk) => chunks.push(chunk))
-          res.on('end', () => {
-            try {
-              const json = JSON.parse(Buffer.concat(chunks).toString('utf8'))
-              if (json.status === 'succeeded' && json.output) {
-                // Replicate returns an array of URLs, get the first one
-                const imageUrl = Array.isArray(json.output) ? json.output[0] : json.output
-                this.downloadImageFromUrl(imageUrl).then(resolve).catch(reject)
-              } else if (json.status === 'failed') {
-                reject(new Error(json.error || 'Replicate prediction failed'))
-              } else if (json.status === 'processing' || json.status === 'starting') {
-                setTimeout(poll, 2000) // Poll again in 2 seconds
-              } else {
-                reject(new Error(`Unexpected prediction status: ${json.status}`))
-              }
-            } catch (err) {
-              reject(err)
-            }
-          })
-        })
-
-        req.on('error', reject)
-        req.on('timeout', () => { req.destroy(); reject(new Error('Replicate poll timed out')) })
-        req.end()
-      }
-
-      poll()
-    })
-  }
-
-  async downloadImageFromUrl(url) {
-    return new Promise((resolve, reject) => {
-      https.get(url, (res) => {
-        const chunks = []
-        res.on('data', (chunk) => chunks.push(chunk))
-        res.on('end', () => {
-          const buffer = Buffer.concat(chunks)
-          const contentType = res.headers['content-type'] || 'image/png'
-          resolve(`data:${contentType};base64,${buffer.toString('base64')}`)
-        })
-      }).on('error', reject)
-    })
   }
 
   // ── Ad copy
@@ -601,7 +382,7 @@ Return just the reply text.`
     this.orchestrator.broadcast({ type: 'task', message: `[CONTENT] Creating launch content for: ${niche.suggestedProduct}`, level: 'info' })
     const prod = {
       id: 'new', name: niche.suggestedProduct, price: niche.suggestedPrice,
-      pain: niche.pain, target: niche.targetSub, sub: niche.targetSub, url: 'https://toolifyai.com'
+      pain: niche.pain, target: niche.targetSub, sub: niche.targetSub, url: 'http://toolifysahilsingh.co.in'
     }
     const [reddit, twitter, linkedin] = await Promise.allSettled([
       this.generateRedditPost(prod, 'new launch announcement', {}),
@@ -609,18 +390,6 @@ Return just the reply text.`
       this.generateLinkedInPost(prod, 'new product launch'),
     ])
     return { reddit: reddit.value, twitter: twitter.value, linkedin: linkedin.value }
-  }
-
-  pickContentAngle(research, topic) {
-    if (Array.isArray(topic) && topic.length) {
-      return topic.map(t => String(t).trim()).filter(Boolean).join(' | ') 
-    }
-    if (typeof topic === 'string' && topic.trim()) return topic.trim()
-    const angles = Array.isArray(research?.contentAngles) ? research.contentAngles.filter(Boolean) : []
-    const topics = Array.isArray(research?.topTopics) ? research.topTopics.filter(Boolean) : []
-    if (angles.length) return angles[Math.floor(Math.random() * angles.length)]
-    if (topics.length) return topics[Math.floor(Math.random() * topics.length)]
-    return 'saving time on client communication'
   }
 
   selectProduct(decision) {
