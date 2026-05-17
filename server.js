@@ -234,6 +234,15 @@ app.get('/health', (req, res) => res.json({
   engine: orc?.running ? 'running' : 'starting'
 }))
 
+// ── Approval routes
+try {
+  const approvalRoutes = require('./routes/approval')
+  app.use('/api/approval', approvalRoutes)
+  console.log('✅ Approval routes loaded')
+} catch (err) {
+  console.warn('⚠ Approval routes not loaded:', err.message)
+}
+
 // ── Catch-all → dashboard
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'index.html'))
