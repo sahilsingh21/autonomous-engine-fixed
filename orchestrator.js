@@ -22,6 +22,7 @@ const FinanceAgent     = require('./agents/FinanceAgent')
 const OptimizerAgent   = require('./agents/OptimizerAgent')
 const AdvertisingAgent    = require('./agents/AdvertisingAgent')
 const LinkedInReplyAgent  = require('./agents/LinkedInReplyAgent')
+const ImageAgent          = require('./agents/ImageAgent')
 
 class AgentOrchestrator extends EventEmitter {
   constructor() {
@@ -47,6 +48,7 @@ class AgentOrchestrator extends EventEmitter {
       optimizer:   new OptimizerAgent(this),
       advertising:   new AdvertisingAgent(this),
       linkedinReply: new LinkedInReplyAgent(this),
+      imageAgent:    new ImageAgent(this),
     }
 
     for (const [name, agent] of Object.entries(this.agents)) {
@@ -160,7 +162,18 @@ class AgentOrchestrator extends EventEmitter {
       // 3. Generate content (always has fallbacks)
       const content = await this.runTask('content', 'generateDailyContent', { research, decision })
 
-      // 4. Publish (sends approval email if REQUIRE_APPROVAL=true)
+      // 4. Generate images for the post
+      let images = {}
+      try {
+        images = await this.agents.imageAgent?.generateBatchImages(content) || {}
+        if (Object.keys(images).length > 0) {
+          // Attach image paths to content for publisher
+          if (content.linkedin && images.linkedin) content.linkedin.imagePath = images.linkedin
+          if (content.twitter  && images.twitter)  content.twitter.imagePath  = images.twitter
+        }
+      } catch {}
+
+      // 5. Publish (sends approval email if REQUIRE_APPROVAL=true)
       const result = await this.runTask('publisher', 'publishAll', { content })
 
       // 5. Mark posted today (even if pending approval — prevents double send)

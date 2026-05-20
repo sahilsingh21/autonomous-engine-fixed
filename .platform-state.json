@@ -2,5 +2,6 @@
   "linkedin": true,
   "twitter": false,
   "reddit": false,
-  "linkedinReply": false
+  "linkedinReply": false,
+  "imageGeneration": true
 }

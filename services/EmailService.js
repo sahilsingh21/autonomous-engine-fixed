@@ -7,8 +7,8 @@ const https = require('https')
 class EmailService {
   constructor() {
     this.apiKey = process.env.RESEND_API_KEY
-    this.to     = process.env.ALERT_EMAIL || 'noreply@sahilsingh.co.in'
-    this.from   = 'sahilsingh2597@gmail.com'
+    this.to     = process.env.ALERT_EMAIL || 'sahilsingh2597@gmail.com'
+    this.from   = 'noreply@toolify.sahilsingh.co.in'
     this.enabled = !!(this.apiKey && !this.apiKey.includes('your-'))
   }
 

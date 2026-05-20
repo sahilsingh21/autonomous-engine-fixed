@@ -443,6 +443,21 @@ input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--
       </div>
     </div>
 
+    <!-- Image Generation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;background:rgba(157,127,234,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🖼️</div>
+          <div>
+            <div style="font-weight:600;font-size:13px">Post Image Generation</div>
+            <div style="font-size:11px;color:var(--text3)">Auto-generates 1200×627px images for LinkedIn + Twitter posts using PIL</div>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-imageGeneration" onchange="setPlatform('imageGeneration',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
     <!-- LinkedIn Reply Agent -->
     <div class="panel">
       <div class="plabel">LINKEDIN AUTO-REPLY AGENT</div>

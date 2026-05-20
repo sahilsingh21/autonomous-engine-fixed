@@ -169,7 +169,7 @@ class ApprovalService {
 </html>`
 
     const body = JSON.stringify({
-      from:    'npreply@sahilsingh.co.in',
+      from:    'noreply@sahilsingh.co.in',
       to:      this.alertEmail,
       subject: `[Toolify AI] Review ${approval.platform} post before publishing`,
       html,

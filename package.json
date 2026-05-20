@@ -1,7 +1,7 @@
 {
   "name": "toolify-ai-autonomous-engine",
-  "version": "2.3.0",
-  "description": "Toolify AI — Fully autonomous company engine. 1 post/day with email approval.",
+  "version": "2.4.0",
+  "description": "Toolify AI — Fully autonomous company engine. Image generation + email approval.",
   "main": "server.js",
   "scripts": {
     "start":        "node server.js",

@@ -22,7 +22,8 @@ function loadState() {
     linkedin: !!(process.env.LINKEDIN_ACCESS_TOKEN && process.env.LINKEDIN_PERSON_ID),
     twitter:  !!(process.env.TWITTER_API_KEY && process.env.TWITTER_ACCESS_TOKEN),
     reddit:   !!(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_USERNAME),
-    linkedinReply: false, // LinkedIn comment auto-reply — off by default
+    linkedinReply:   false, // LinkedIn comment auto-reply — off by default
+    imageGeneration: true,  // Generate images for posts — on by default
   }
 }
 
@@ -47,7 +48,7 @@ router.get('/', (req, res) => {
 router.post('/:name', (req, res) => {
   const { name }    = req.params
   const { enabled } = req.body
-  const valid = ['linkedin', 'twitter', 'reddit', 'linkedinReply']
+  const valid = ['linkedin', 'twitter', 'reddit', 'linkedinReply', 'imageGeneration']
 
   if (!valid.includes(name)) {
     return res.status(400).json({ error: `Unknown platform: ${name}. Valid: ${valid.join(', ')}` })

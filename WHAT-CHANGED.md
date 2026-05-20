@@ -1,6 +1,21 @@
-# Toolify AI Engine v2.1 — What Changed & How To Use
+# Toolify AI Engine v2.4 — What Changed & How To Use
 
-## PROBLEMS FIXED
+## MERGED FEATURES (v2.4)
+
+This version combines **Email Approval** + **Image Generation** features:
+
+| Feature | Description |
+|---------|-------------|
+| 📧 Email Approval | Every post goes through email review before publishing |
+| 🖼️ Image Generation | Auto-generates images for LinkedIn/Twitter posts via Replicate (Stable Diffusion) or free Picsum fallback |
+| 🔌 Platform Toggles | Dashboard → "🔌 Platform Toggles" — flip LinkedIn/Twitter/Reddit on/off |
+| 🤖 LinkedIn Auto-Reply | Monitors and replies to LinkedIn comments hourly |
+| 1️⃣ 1 Post Per Day | Engine posts ONCE at 10am IST only |
+| ⚡ Force Post | `npm run force-post` bypasses the daily limit for testing |
+
+---
+
+## PROBLEMS FIXED (from earlier versions)
 
 | Problem | Root Cause | Fix |
 |---------|-----------|-----|
@@ -12,6 +27,38 @@
 | Ollama timeout / falling back to Anthropic | Timeout was 30s — model loading takes longer | Timeout raised to 180s |
 | Content generating but LinkedIn null | No fallback when AI returns empty | Added 3 hardcoded fallback posts |
 | Daily loop running multiple times | No concurrency guard | Added `dailyLoopRunning` flag |
+
+---
+
+## HOW TO CONFIGURE IMAGE GENERATION
+
+Add to your `.env`:
+
+```env
+# Replicate — best quality ($0.003/image)
+REPLICATE_API_TOKEN=r8_your-token-here
+
+# Without this, posts use free Lorem Picsum placeholder images
+```
+
+Sign up at [replicate.com](https://replicate.com) → Account → API Tokens.
+
+---
+
+## HOW TO CONFIGURE EMAIL APPROVAL
+
+Add to your `.env`:
+
+```env
+REQUIRE_APPROVAL=true
+RESEND_API_KEY=re_your-resend-key
+ALERT_EMAIL=you@yourdomain.com
+ENGINE_PUBLIC_URL=http://your-server-ip:4000
+```
+
+When `REQUIRE_APPROVAL=true`, every post triggers an email to `ALERT_EMAIL` with Approve/Reject links before publishing.
+
+Set `REQUIRE_APPROVAL=false` to auto-publish without review.
 
 ---
 
@@ -40,7 +87,7 @@ TWITTER_ACCESS_TOKEN=1924474369636474112-XXXXXXXXXXXXXXXXXXXX
 
 ---
 
-## HOW TO START NOW
+## HOW TO START
 
 ### Step 1 — Test all tokens first
 ```bash
@@ -52,20 +99,20 @@ Fix any ❌ errors before continuing.
 ```bash
 npm run post-now
 ```
-This generates content and posts to LinkedIn + Twitter immediately.
-Watch terminal for `✅ Posted` messages.
+This generates content (+ image) and posts to LinkedIn + Twitter immediately.
+If `REQUIRE_APPROVAL=true`, sends review emails instead of posting directly.
 
-### Step 3 — Run continuously (24/7)
+### Step 3 — Force post (bypass daily limit)
+```bash
+npm run force-post
+```
+
+### Step 4 — Run continuously (24/7)
 ```bash
 npm run dev
 ```
-This starts the engine. It will:
-- Post immediately on startup
-- Post again at 9am, 2pm, 7pm every day
-- Check revenue hourly (Razorpay)
-- Reply to mentions hourly
 
-### Step 4 — Run on server (never stops)
+### Step 5 — Run on server (never stops)
 ```bash
 npm install -g pm2
 pm2 start ecosystem.config.js
@@ -75,35 +122,39 @@ pm2 startup
 
 ---
 
-## FILE STRUCTURE — WHERE EACH FILE GOES
+## FILE STRUCTURE
 
 ```
 autonomous-engine-fixed/
 ├── agents/
-│   ├── ContentAgent.js       ← UPDATED — hardcoded fallbacks
-│   ├── FinanceAgent.js       ← UPDATED — Razorpay, fixed PIVOT bug
-│   ├── PublisherAgent.js     ← UPDATED — OAuth 1.0a Twitter, LinkedIn
-│   ├── OptimizerAgent.js     ← UPDATED — fixed 403 spam
+│   ├── ContentAgent.js          ← Image generation (HuggingFace/Replicate/Picsum)
+│   ├── PublisherAgent.js        ← Image upload to LinkedIn + Email approval gate
+│   ├── ImageAgent.js            ← Batch image generation
+│   ├── LinkedInReplyAgent.js    ← Auto-reply to LinkedIn comments
+│   ├── FinanceAgent.js
 │   ├── ResearchAgent.js
 │   ├── AdvertisingAgent.js
-│   └── (README: put all agent files in agents/ folder)
-├── models/
-│   └── index.js
+│   └── OptimizerAgent.js
 ├── routes/
-│   └── payment.js            ← Razorpay routes
+│   ├── approval.js              ← /api/approval — approve/reject endpoints
+│   ├── platforms.js             ← /api/platforms — toggle LinkedIn/Twitter/Reddit
+│   └── payment.js
 ├── services/
-│   ├── EmailService.js
-│   └── (put RazorpayService.js, OllamaFirstAI.js here from toolify-updates)
+│   ├── ApprovalService.js       ← Approval DB logic + email sending
+│   └── EmailService.js
+├── models/
+│   └── index.js                 ← Includes Approval model
 ├── dashboard/
-│   └── index.html            ← Live dashboard
-├── orchestrator.js           ← UPDATED — posts on startup, fixed loops
-├── server.js                 ← UPDATED — immediatePost on startup
-├── package.json              ← UPDATED — new scripts
-├── ecosystem.config.js       ← PM2 config for 24/7
-├── linkedin-auth.js          ← Get/refresh LinkedIn token
-├── test-tokens.js            ← NEW — test all credentials
-├── .env                      ← UPDATED — fixed tokens
-└── WHAT-CHANGED.md           ← This file
+│   └── index.html               ← Live dashboard with platform toggles
+├── orchestrator.js              ← Wires all agents + 1-post/day guard
+├── server.js                    ← Approval + platform routes registered
+├── package.json                 ← v2.4.0 with force-post script
+├── ecosystem.config.js
+├── linkedin-auth.js
+├── test-tokens.js
+├── test-huggingface.js          ← Test image generation standalone
+├── .env                         ← Your credentials
+└── WHAT-CHANGED.md              ← This file
 ```
 
 ---
@@ -114,10 +165,16 @@ autonomous-engine-fixed/
 # Test all credentials before starting
 node test-tokens.js
 
+# Test image generation only
+node test-huggingface.js
+
 # Post to LinkedIn + Twitter RIGHT NOW (one-off)
 npm run post-now
 
-# Run full daily loop once (research → content → publish → finance)
+# Force post (bypass the 1-per-day limit)
+npm run force-post
+
+# Run full daily loop once
 npm run test-daily
 
 # Test LinkedIn posting only
@@ -144,65 +201,20 @@ pm2 restart nicheai-engine
 
 | When | What |
 |------|------|
-| Immediately on startup | Research → Generate content → Post LinkedIn + Twitter |
-| 9:00 AM daily | Same full cycle |
-| 2:00 PM daily | Same full cycle |
-| 7:00 PM daily | Same full cycle |
-| Every hour | Pull Razorpay revenue, reply to Reddit mentions |
+| Immediately on startup | Research → Generate content + image → (Approval email if enabled) → Post |
+| 10:00 AM IST daily | Same full cycle |
+| Every hour | Pull Razorpay revenue, reply to LinkedIn comments |
 | Every 5 min | Lightweight budget check (no AI calls) |
 | Monday 8am | Weekly deep research + portfolio evaluation |
 
 ---
 
-## LINKEDIN PERSON ID CHECK
+## PLATFORM TOGGLES
 
-Your current `LINKEDIN_PERSON_ID=QHoZd8T01y`
-
-Run `node test-tokens.js` — if LinkedIn shows ✅ with your name, the ID is correct.
-If it shows ❌, run `node linkedin-auth.js` to get the correct ID.
-
----
-
-## TWITTER PERMISSIONS CHECK
-
-Your app needs **"Read and Write"** permissions to post tweets.
-
-1. Go to `developer.twitter.com`
-2. Your Project → App Settings
-3. **User authentication settings** → Edit
-4. App permissions: select **"Read and Write"**
-5. Save → then **regenerate your Access Token** (permissions change requires new token)
-
----
-
-## v2.3 NEW FEATURES
-
-### 1. Platform On/Off Toggles
 Dashboard → "🔌 Platform Toggles" — flip any platform on/off instantly:
 - 💼 LinkedIn — on/off
 - 🐦 Twitter/X — on/off
 - 🔴 Reddit — on/off
-- Auto-reply agent — on/off
+- 🤖 Auto-reply agent — on/off
 
 State saved to `.platform-state.json` — persists across restarts.
-
-### 2. LinkedIn Auto-Reply Agent
-Monitors comments on your LinkedIn posts every hour.
-Replies with human-like AI responses:
-- Praise → genuine thank you
-- Question → clear direct answer
-- Feedback → positive acknowledgement
-- Spam / "DM me" → SKIP (no reply)
-Enable in: Dashboard → Platform Toggles → Auto-reply toggle
-
-### 3. Domain Fixed
-All URLs now point to `sahilsingh.co.in` instead of `toolify.sahilsingh.co.in`
-
-### 4. 1 Post Per Day
-Engine posts ONCE at 10am IST only.
-No more duplicate posting.
-`npm run force-post` bypasses the limit for testing.
-
-### 5. Email Approval Flow
-Every post goes through email review before publishing.
-Approve or reject from your email — no login needed.

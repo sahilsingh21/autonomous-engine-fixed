@@ -8,9 +8,9 @@ const http  = require('http')
 const https = require('https')
 const url   = require('url')
 
-const CLIENT_ID     = process.env.LINKEDIN_CLIENT_ID     || '86vnJl00nc6n9q'
+const CLIENT_ID     = process.env.LINKEDIN_PERSON_ID     || '86vnJl00nc6n9q'
 const CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET || ''
-const REDIRECT_URI  = process.env.LINKEDIN_REDIRECT_URI  || 'http://toolify.sahilsingh.co.in/auth/linkedin/callback'
+const REDIRECT_URI  = process.env.LINKEDIN_REDIRECT_URI  || 'http://localhost:4000/auth/linkedin/callback'
 const PORT          = 4000
 
 if (!CLIENT_SECRET || CLIENT_SECRET === 'your-client-secret-from-auth-tab') {
