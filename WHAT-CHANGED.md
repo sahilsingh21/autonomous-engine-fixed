@@ -53,7 +53,7 @@ Add to your `.env`:
 REQUIRE_APPROVAL=true
 RESEND_API_KEY=re_your-resend-key
 ALERT_EMAIL=you@yourdomain.com
-ENGINE_PUBLIC_URL=http://your-server-ip:4000
+ENGINE_PUBLIC_URL=https://toolify.sahilsingh.co.in
 ```
 
 When `REQUIRE_APPROVAL=true`, every post triggers an email to `ALERT_EMAIL` with Approve/Reject links before publishing.

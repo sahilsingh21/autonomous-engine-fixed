@@ -13,7 +13,7 @@ class ResearchAgent {
   constructor(orchestrator) {
     this.orchestrator = orchestrator
     this.name = 'research'
-    this.ua   = 'ToolifyAIBot/1.0 (+https://toolifyai.com)'
+    this.ua   = 'ToolifyAIBot/1.0 (+https://toolify.sahilsingh.co.in)'
   }
 
   async initialize() {

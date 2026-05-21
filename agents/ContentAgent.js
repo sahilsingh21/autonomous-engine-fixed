@@ -16,21 +16,21 @@ const { Content } = require('../models')
 const PRODUCTS = [
   {
     id: 'replydraft', name: 'ReplyDraft AI', price: '₹750/mo',
-    url:    process.env.REPLYDRAFT_URL || 'https://toolifyai.com/replydraft',
+    url:    process.env.REPLYDRAFT_URL || 'https://toolify.sahilsingh.co.in/replydraft',
     pain:   'writing professional replies to client emails and LinkedIn messages',
     target: 'freelancers, consultants, VAs, and remote workers in India',
     sub:    'freelance',
   },
   {
     id: 'listinglift', name: 'ListingLift AI', price: '₹249/batch',
-    url:    process.env.LISTINGLIFT_URL || 'https://toolifyai.com/listinglift',
+    url:    process.env.LISTINGLIFT_URL || 'https://toolify.sahilsingh.co.in/listinglift',
     pain:   'writing product listings for Amazon, Flipkart, Etsy, Shopify',
     target: 'online sellers, Etsy shop owners, D2C brands in India',
     sub:    'Etsy',
   },
   {
     id: 'policypal', name: 'PolicyPal AI', price: '₹399/doc',
-    url:    process.env.POLICYPAL_URL || 'https://toolifyai.com/policypal',
+    url:    process.env.POLICYPAL_URL || 'https://toolify.sahilsingh.co.in/policypal',
     pain:   'understanding Terms of Service and Privacy Policy documents',
     target: 'individuals, small businesses, and startup founders',
     sub:    'smallbusiness',
@@ -56,75 +56,194 @@ const HASHTAG_POOLS = {
 }
 
 // ── Hardcoded fallback content — used only when AI is completely unavailable
+// Fallback posts — used ONLY when AI is completely unavailable
+// Written as genuine information posts, NOT product pitches
+// Rotated by day so the same post never appears twice in a row
+
 const FALLBACK_LINKEDIN = [
-  `Building Toolify AI in public 🚀
 
-Running an autonomous AI company with 5 AI agents that post content, track revenue, and make decisions 24/7.
+  // Topic: The real cost of writing client emails
+  `Most freelancers track billable hours. Almost nobody tracks email hours.
 
-3 products live for Indian freelancers and sellers:
-✍️ ReplyDraft AI — professional email replies in 10 seconds (₹750/mo)
-🛒 ListingLift AI — 5 marketplace listings from one description (₹249)
-🔍 PolicyPal AI — understand any ToS in plain English (₹399)
+I started timing myself last month. Here is what I found:
 
-AI cost per user: ₹0 (running Ollama locally)
-Margin: ~98%+
+2.5 hours every week on client emails alone — follow-ups, project updates, revision requests, payment reminders. None of it billable. All of it mentally draining.
 
-If you're a freelancer or online seller in India, check it out. Link in comments.
+The compounding effect is brutal. Over a year that is 130 hours — more than 3 full work weeks — spent on writing emails that clients read in 10 seconds.
 
-#ToolifyAI #BuildingInPublic #FreelanceIndia #AI #IndianStartup`,
+The shift that helped: writing templates for the 10 email situations that repeat every month. Scope change requests. Timeline delays. Payment reminders. Positive project updates.
 
-  `The honest truth about building a SaaS in India in 2026:
+Once you have a template for each, you stop writing from scratch. You edit instead. Editing is 5x faster than writing.
 
-The hardest part isn't building — it's getting the first 10 paying users.
+What is the email situation that costs you the most time every week?
 
-What I'm doing with Toolify AI:
-→ Autonomous engine posts content daily on LinkedIn + Reddit + Twitter
-→ AI agents research trending topics and adjust messaging in real-time
-→ Razorpay handles payments (UPI, cards, net banking)
-→ Ollama runs all AI locally — ₹0 API cost
+#FreelanceIndia #Productivity #ClientManagement #Freelance #IndianFreelancer`,
 
-Products: ReplyDraft AI, ListingLift AI, PolicyPal AI
+  // Topic: Why Indian online sellers fail on Etsy but succeed on Amazon
+  `Selling on Etsy vs Amazon is not just a platform difference. It is a completely different buyer psychology.
 
-Still at ₹0 MRR. But the machine is running. Building in public until it works.
+Amazon buyers are in solve mode. They know what they want. They search, compare specs, check reviews, buy. Your listing needs a keyword-rich title and bullet points that answer objections.
 
-#IndieHacker #SaaSIndia #ToolifyAI #BuildingInPublic #Founders`,
+Etsy buyers are in discover mode. They are browsing. They want to feel something about a product before buying. Your listing needs a story — who made this, why, what makes it special.
 
-  `Freelancers — quick question:
+The mistake most Indian sellers make: they write one description and copy-paste it across both platforms. Amazon listings that read like Amazon listings get buried on Etsy. Etsy listings that feel handcrafted and personal do not convert on Amazon.
 
-How much time do you spend every week writing professional emails and replies to clients?
+Platform-specific copy is not optional. It is the difference between being visible and being invisible.
 
-Most people say 3-5 hours per week. That's nearly a full day every month just on email copy.
+The same product, two completely different stories — both true, just told differently for different buyers.
 
-I built ReplyDraft AI to fix this:
-→ Paste the email you received
-→ Pick your tone (professional, friendly, firm)
-→ Get a ready-to-send reply in 10 seconds
+#EcommercIndia #Etsy #AmazonSeller #OnlineSelling #D2CIndia`,
 
-₹750/month. Free trial available.
+  // Topic: Terms of Service — what most people never check
+  `Most people click "I agree" without reading a single line of the Terms of Service.
 
-Link in comments if you want to try it.
+I was the same. Until I found this clause buried in page 22 of a popular design tool I was using for client work:
 
-#Freelance #Productivity #ToolifyAI #FreelanceIndia #EmailProductivity`,
+"You grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, and distribute content you submit through the service."
+
+That means client work I processed through their platform — they had a license to it.
+
+I am not a lawyer. But I do think everyone should know these three things before accepting any ToS:
+
+1. Who owns content you create or upload through the platform
+2. What happens to your data if you cancel the subscription
+3. Whether they can share or sell your usage data to third parties
+
+None of this takes a law degree. You just need to know which three sections to read. Everything else is usually standard.
+
+Worth 5 minutes before signing up for any tool you use for paid client work.
+
+#SmallBusiness #FreelanceIndia #LegalTips #SaaSTools #DataPrivacy`,
+
+  // Topic: Why first-time founders underestimate distribution
+  `A product nobody finds is not a product. It is a hobby.
+
+Most first-time founders — including me — spend 80% of time building and 20% on distribution. The ratio that actually works is closer to the opposite.
+
+Here is the uncomfortable reality:
+
+A mediocre product with great distribution beats a great product with no distribution. Every time. Without exception.
+
+What distribution actually means in practice:
+1. Showing up consistently in places where your audience already spends time
+2. Being useful before you ask for anything in return
+3. Saying the same thing in enough different ways that it finally lands for someone
+
+The founders who get their first 10 customers are not the ones who built the best product. They are the ones who told the most people about a good enough product.
+
+What is your current distribution channel that is actually working?
+
+#IndianStartup #Founders #SaaSIndia #ProductBuilding #GrowthStrategy`,
+
+  // Topic: How AI tools actually save time (vs the hype)
+  `The AI productivity hype is mostly noise. But buried in the noise are 3 or 4 genuinely useful workflows.
+
+Here is what actually saves time in my experience:
+
+WORKS: First drafts of structured documents. Contracts, proposals, email templates, listing descriptions. AI gets you to 70% in seconds. You edit to 100%.
+
+WORKS: Summarising long documents. Terms of Service, meeting transcripts, competitor blog posts. Paste → plain English summary → done.
+
+WORKS: Generating variations. Need 5 subject lines for the same email? 3 ways to phrase a price increase? AI handles this faster than any human.
+
+DOES NOT WORK: Open-ended creative work. Strategy. Anything requiring real context about your specific situation.
+
+The pattern: AI is fast at structure, slow at nuance. Use it where structure matters and speed is the constraint.
+
+What is the one AI workflow that actually made a real difference for you?
+
+#AITools #Productivity #IndianStartup #WorkSmart #FutureOfWork`,
 ]
 
 const FALLBACK_TWEETS = [
   [
-    'Built an autonomous AI company that runs itself 24/7 🤖\n\nNo employees. No manual work. Just 5 AI agents.\n\nHere\'s how it works 👇',
-    '① Research Agent scans Reddit + HN daily for trending topics\nFinds pain points real people are complaining about',
-    '② Content Agent writes posts for LinkedIn, Reddit, and Twitter\nUsing Ollama locally — ₹0 AI cost per post',
-    '③ Publisher Agent posts automatically\nLinkedIn ✓ | Reddit ✓ | Twitter ✓',
-    '④ Finance Agent tracks Razorpay payments\nAuto-kills products with 0 revenue after 3 days',
-    '⑤ Optimizer Agent runs A/B tests on pricing and headlines',
-    '3 products live:\n✍️ ReplyDraft AI (₹750/mo)\n🛒 ListingLift AI (₹249)\n🔍 PolicyPal AI (₹399)\n\nAll for Indian freelancers and sellers.',
-    'Still at ₹0 MRR. But the machine is running.\n\nBuilding in public → toolifyai.com\n\n#ToolifyAI #BuildingInPublic #IndieHacker #AI #SaaS',
+    `Freelancers underestimate how much time email actually costs them.
+
+I tracked mine for a month. Here's what I found 👇`,
+    `Week 1: 2.5 hours on client emails
+Week 2: 3.1 hours
+Week 3: 2.8 hours
+Week 4: 2.6 hours
+
+Average: ~11 hours/month. None of it billable.`,
+    `The emails that take longest:
+→ Explaining a scope change diplomatically
+→ Following up on late payments without being rude
+→ Declining a client request without losing the relationship`,
+    `What actually helped: writing a template for the 10 email situations that repeat every month.
+
+Editing a template takes 90 seconds. Writing from scratch takes 15 minutes.`,
+    `The deeper issue: email is a context switch. Every time you stop to write a client email you lose 20 min of flow on actual work.
+
+Batching email to twice a day helps more than any other change.`,
+    `None of this is magic. It is just treating email as a system instead of an inbox to react to.`,
+    `If you track your own email time this week you will probably be surprised.
+
+The number is always higher than people think.
+
+#FreelanceIndia #Productivity #ClientManagement #Freelance #TimeManagement`,
   ],
   [
-    'Running Ollama locally changed everything for my SaaS 🔥\n\nHere\'s what changed 👇',
-    'Before: Paying $50-100/month for OpenAI API\nConversion rate anxiety: every AI call costs money',
-    'After: Ollama on local machine\nAPI cost: ₹0\nSpeed: fast\nPrivacy: data never leaves device',
-    'The margin math:\nReplyDraft AI: ₹750/user/mo\nOllama cost: ₹0\nRazorpay fee: ~₹22\nNet profit: ₹728 per user',
-    'That\'s 97%+ margin before any fixed costs.\n\nBuilding Toolify AI on this stack.',
-    '3 tools live: ReplyDraft, ListingLift, PolicyPal\nAll running on Ollama locally\n\nLink in bio → #ToolifyAI #Ollama #IndieHacker #AI #MicroSaaS',
+    `Indian sellers on Etsy vs Amazon are playing two completely different games.
+
+Most people treat them the same. Here's why that is a mistake 👇`,
+    `Amazon buyer mindset: I need X. Show me the best X at the best price.
+
+They search a keyword, scan titles and bullet points, check reviews, buy.
+
+Your listing needs to WIN the search. Keywords first.`,
+    `Etsy buyer mindset: I am browsing. Show me something that makes me feel something.
+
+They scroll, stop at visuals, read the story, buy if it connects.
+
+Your listing needs to tell a story. Emotion first.`,
+    `The same handmade leather wallet.
+
+Amazon listing: "Genuine leather bifold wallet, RFID blocking, 6 card slots, brown, men"
+
+Etsy listing: "Hand-stitched full grain leather wallet — made one at a time in a small workshop in Jaipur"
+
+Both accurate. Completely different psychology.`,
+    `Most Indian sellers copy-paste the same description across platforms.
+
+Result: mediocre performance everywhere instead of strong performance on one.`,
+    `Pick one platform, write for its buyer, win there first.
+
+Then adapt for the second platform. Then the third.
+
+Never the same copy across all three.`,
+    `What platform is actually driving the most sales for you right now?
+
+#Ecommerce #Etsy #AmazonIndia #OnlineSelling #D2CIndia #IndianSellers`,
+  ],
+  [
+    `The ToS clause almost every freelancer misses — and why it matters 👇`,
+    `Most SaaS tools you use for client work have a clause like this buried in their Terms:
+
+"You grant us a non-exclusive license to use content submitted through the service"
+
+That includes your client work.`,
+    `I am not a lawyer. But I do think this is worth knowing.
+
+Three things worth checking before agreeing to any ToS:
+
+1. Who owns content you process through the platform`,
+    `2. What happens to your data after you cancel
+
+Some tools keep it for 30 days. Some keep it indefinitely. Some delete it immediately.
+
+Matters more than most people realise.`,
+    `3. Whether they share usage data with third parties
+
+"Anonymised and aggregated" usually means your data is included.
+
+"We do not sell personal data" does not mean they do not share it.`,
+    `None of this requires a law degree.
+
+You just need to know which 3 pages in a 30-page document to actually read.`,
+    `Worth 5 minutes before signing up for any tool you use for paid client work.
+
+#SmallBusiness #FreelanceIndia #DataPrivacy #LegalTips #SaaSTools`,
   ],
 ]
 
@@ -151,7 +270,7 @@ Anyone else doing something similar? What's your workflow for handling client co
 *(I ended up building a Chrome extension for this — ReplyDraft AI — if you want to try it, happy to share the link)*`,
     subreddit: 'freelance',
     mentionProduct: true,
-    productMentionText: 'PS: The tool I mentioned is ReplyDraft AI — free trial available at toolifyai.com',
+    productMentionText: 'PS: The tool I mentioned is ReplyDraft AI — free trial available at toolify.sahilsingh.co.in',
   },
   listinglift: {
     title: 'Stop writing marketplace listings from scratch — my time-saving process',
@@ -176,7 +295,7 @@ Now I paste one description and generate all 5 platform listings at once. Takes 
 Anyone have tips for standing out in saturated categories?`,
     subreddit: 'Etsy',
     mentionProduct: true,
-    productMentionText: 'PS: I use ListingLift AI for this — toolifyai.com',
+    productMentionText: 'PS: I use ListingLift AI for this — toolify.sahilsingh.co.in',
   },
   policypal: {
     title: 'Always check the ToS before you sign up — a reminder',
@@ -199,7 +318,7 @@ I now paste them into an AI and ask for a plain-English summary with risk flags 
 What's the worst ToS clause you've ever found hiding in the fine print?`,
     subreddit: 'smallbusiness',
     mentionProduct: true,
-    productMentionText: 'PS: I use PolicyPal AI for ToS summaries — toolifyai.com',
+    productMentionText: 'PS: I use PolicyPal AI for ToS summaries — toolify.sahilsingh.co.in',
   },
 }
 
@@ -347,7 +466,19 @@ WRITE THE POST NOW. RULES:
 7. Total length: 180-250 words
 8. PLAIN TEXT ONLY — no asterisks, no markdown, no dashes as bullets
 9. Use → or numbers for lists
-10. Never say: "game-changer", "leverage", "unlock", "are you tired of", "transform", "dive into"
+10. BANNED words and phrases — never use any of these:
+    "game-changer", "leverage", "unlock", "are you tired of", "transform", "dive into",
+    "supercharge", "revolutionize", "empower", "in today's fast-paced world", "the future is here"
+
+11. BANNED formats — never write the post as:
+    → A product spec sheet listing features with arrows
+    → A "What I'm doing with [product]:" bullet list
+    → A list of product names + prices + one-liners
+    → Anything structured like: "Product X → does Y (₹price)"
+    The post must read as a story, observation, or insight — not a brochure
+
+12. The product mention (if any) should be ONE natural sentence woven into the post
+    — not a section at the end that lists all products
 
 Output the post text only. No preamble, no explanation.`
 
@@ -673,7 +804,7 @@ Return just the reply text.`
     this.orchestrator.broadcast({ type: 'task', message: `[CONTENT] Creating launch content for: ${niche.suggestedProduct}`, level: 'info' })
     const prod = {
       id: 'new', name: niche.suggestedProduct, price: niche.suggestedPrice,
-      pain: niche.pain, target: niche.targetSub, sub: niche.targetSub, url: 'https://toolifyai.com'
+      pain: niche.pain, target: niche.targetSub, sub: niche.targetSub, url: 'https://toolify.sahilsingh.co.in'
     }
     const hashtags = this.buildHashtags({}, prod)
     const [reddit, twitter, linkedin] = await Promise.allSettled([

@@ -513,7 +513,7 @@ Live now at ₹750/month. Try it free (link in comments).
       `Building an autonomous AI company in public 🤖\n\nThe engine posts content, tracks revenue, and makes decisions — all without me.\n\nDay ${new Date().getDate()} update 👇`,
       `3 AI tools live:\n\n✍️ ReplyDraft AI — client emails in 10 seconds\n🛒 ListingLift AI — 5 marketplace listings instantly\n🔍 PolicyPal AI — understand any ToS\n\nAll built for Indian freelancers and sellers.`,
       `Stack:\n→ Ollama running locally (₹0 AI cost)\n→ Razorpay for payments (works in India)\n→ MongoDB Atlas for data\n→ 5 AI agents running 24/7\n\nMargin: ~98%+ on every sale 💰`,
-      `Try any tool free → toolifyai.com\n\n#ToolifyAI #BuildingInPublic #IndieHacker #SaaSIndia`,
+      `Try any tool free → toolify.sahilsingh.co.in\n\n#ToolifyAI #BuildingInPublic #IndieHacker #SaaSIndia`,
     ]
   }
 
@@ -539,7 +539,7 @@ Live now at ₹750/month. Try it free (link in comments).
       const res = await axios.post('https://oauth.reddit.com/api/submit', body, {
         headers: {
           Authorization:  `Bearer ${token}`,
-          'User-Agent':   'ToolifyAIBot/1.0 (+https://toolifyai.com)',
+          'User-Agent':   'ToolifyAIBot/1.0 (+https://toolify.sahilsingh.co.in)',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         timeout: 10000,
