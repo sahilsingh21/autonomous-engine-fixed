@@ -64,6 +64,15 @@ class AgentOrchestrator extends EventEmitter {
     this.running = true
     this.broadcast({ type:'system', message:'✅ Toolify AI Engine online — 1 post/day mode', level:'success' })
     console.log('\n✅ Engine running — 1 post per day\n')
+
+    // On startup: post immediately if we haven't posted today yet
+    // This ensures Render deployments don't miss the daily post
+    if (!this.alreadyPostedToday()) {
+      console.log('  → No post yet today — triggering daily post now...')
+      setTimeout(() => this.dailyLoop(), 5000) // 5s delay to let server fully start
+    } else {
+      console.log(`  → Already posted today (${this.todayIST()}) — next post tomorrow at 10am IST`)
+    }
   }
 
   // ── Load last post date from PublishLog
@@ -77,15 +86,21 @@ class AgentOrchestrator extends EventEmitter {
     } catch {}
   }
 
-  // ── Check if we already posted today
-  alreadyPostedToday() {
-    const today = new Date().toISOString().split('T')[0]
-    return this.lastDailyPost === today
+  // ── Get today's date in IST (UTC+5:30)
+  todayIST() {
+    const now = new Date()
+    const ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000))
+    return ist.toISOString().split('T')[0]
   }
 
-  // ── Mark today as posted
+  // ── Check if we already posted today (IST)
+  alreadyPostedToday() {
+    return this.lastDailyPost === this.todayIST()
+  }
+
+  // ── Mark today as posted (IST)
   markPostedToday() {
-    this.lastDailyPost = new Date().toISOString().split('T')[0]
+    this.lastDailyPost = this.todayIST()
   }
 
   async testAI() {
@@ -106,17 +121,13 @@ class AgentOrchestrator extends EventEmitter {
     // Hourly: revenue check + engagement
     cron.schedule('0 * * * *', () => this.hourlyLoop())
 
-    // Daily post: 10am IST (4:30 UTC) — ONE TIME ONLY per day
-    cron.schedule('30 4 * * *', () => this.dailyLoop(), {
-      timezone: 'Asia/Kolkata'
-    })
+    // Daily post: 10am IST = 4:30 UTC — explicit UTC, no timezone option (Render-safe)
+    cron.schedule('30 4 * * *', () => this.dailyLoop())
 
-    // Weekly: Monday 8am IST
-    cron.schedule('0 8 * * 1', () => this.weeklyLoop(), {
-      timezone: 'Asia/Kolkata'
-    })
+    // Weekly: Monday 8am IST = 2:30 UTC Monday
+    cron.schedule('30 2 * * 1', () => this.weeklyLoop())
 
-    console.log('  ✅ Scheduler: 1 post/day at 10am IST | hourly revenue check | weekly research')
+    console.log('  ✅ Scheduler: 1 post/day at 10am IST (4:30 UTC) | hourly revenue check | weekly research')
   }
 
   // ── REALTIME (every 5 min) — no AI calls, no posting
@@ -162,16 +173,9 @@ class AgentOrchestrator extends EventEmitter {
       // 3. Generate content (always has fallbacks)
       const content = await this.runTask('content', 'generateDailyContent', { research, decision })
 
-      // 4. Generate images for the post
-      let images = {}
-      try {
-        images = await this.agents.imageAgent?.generateBatchImages(content) || {}
-        if (Object.keys(images).length > 0) {
-          // Attach image paths to content for publisher
-          if (content.linkedin && images.linkedin) content.linkedin.imagePath = images.linkedin
-          if (content.twitter  && images.twitter)  content.twitter.imagePath  = images.twitter
-        }
-      } catch {}
+      // 4. Image is already generated inside ContentAgent.generateDailyContent
+      // with a contextual prompt based on the actual post angle + research
+      // Do NOT overwrite with ImageAgent (generic PIL graphic — not context-aware)
 
       // 5. Publish (sends approval email if REQUIRE_APPROVAL=true)
       const result = await this.runTask('publisher', 'publishAll', { content })

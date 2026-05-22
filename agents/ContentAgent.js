@@ -347,8 +347,24 @@ class ContentAgent {
     const angle           = this.pickContentAngle(research, topic, product.id)
     const richAngle       = this.pickRichAngle(research, product.id)
     const hashtags        = this.buildHashtags(research, product)
-    const imagePromptText = imagePrompt?.trim() || `A high quality social media marketing image for ${product.name} about ${angle}. Bright, modern, minimal, professional style with an Indian startup founder vibe.`
-    const image           = await this.generateHuggingFaceImage(imagePromptText).catch(() => null)
+    // Build image prompt AFTER picking the rich angle so it matches the actual post content
+    const richAngleForImage = this.pickRichAngle(research, product.id)
+    const imageSubject = richAngleForImage?.hook || richAngleForImage?.angle || angle
+    // imageKeywords: short topic words used by Unsplash search — NOT a sentence
+    // Extract the core topic from the hook/angle for image search
+    const imageKeywords = (imageSubject || angle)
+      .replace(/[^a-zA-Z0-9 ]/g, ' ')
+      .split(' ')
+      .filter(w => w.length > 3)
+      .slice(0, 5)
+      .join(' ')
+    // Full prompt for Replicate (AI image gen) — descriptive sentence
+    // Short keywords stored separately for Unsplash fallback
+    const imagePromptText = imagePrompt?.trim() ||
+      `${imageSubject}. ` +
+      `Flat design illustration, Indian startup, minimal, professional LinkedIn post visual. ` +
+      `Topic: ${product.pain}.`
+    const image           = await this.generateHuggingFaceImage(imagePromptText, imageKeywords).catch(() => null)
 
     // Run all in parallel — each has its own fallback
     const [reddit, twitter, linkedin, blog] = await Promise.allSettled([
@@ -447,7 +463,7 @@ class ContentAgent {
       level: 'info'
     })
 
-    const prompt = `You are Sahil Singh, founder of Toolify AI (India), writing a LinkedIn post for today.
+    const prompt = `You are Sahil Singh, a software engineer at Samsung SDS building Toolify AI as a side project, writing a LinkedIn post for today. You are not a "founder" — you are an engineer who ships things on evenings and weekends. Write from that honest perspective.
 
 YOUR RESEARCH FOR TODAY — USE THIS, DO NOT IGNORE IT:
 ${researchBlock || 'No live data — write a strong original post based on the product below.'}
@@ -514,7 +530,7 @@ Output the post text only. No preamble, no explanation.`
       sourcePost            ? `Inspired by: "${sourcePost}"` : '',
     ].filter(Boolean).join('\n\n')
 
-    const prompt = `Write a Twitter/X thread (7 tweets) as Sahil Singh, founder of Toolify AI India.
+    const prompt = `Write a Twitter/X thread (7 tweets) as Sahil Singh — software engineer at Samsung SDS, building Toolify AI as a side project on evenings and weekends.
 
 TODAY'S LIVE RESEARCH — BUILD THE THREAD AROUND THIS:
 ${researchContext || 'No live research — write a strong original thread.'}
@@ -656,14 +672,15 @@ Return JSON: {"title":"","primaryKeyword":"","sections":[{"h2":"","points":[""]}
   }
 
   // ── Image generation
-  async generateHuggingFaceImage(prompt) {
+  async generateHuggingFaceImage(prompt, keywords) {
     try {
       const replicateResult = await this.generateReplicateImage(prompt)
       if (replicateResult) return replicateResult
     } catch (err) {
       console.log('Replicate failed, trying free alternative:', err.message)
     }
-    return this.generateUnsplashImage(prompt)
+    // Pass short keywords to Unsplash instead of the full Replicate prompt
+    return this.generateUnsplashImage(keywords || prompt)
   }
 
   async generateReplicateImage(prompt) {
@@ -710,17 +727,48 @@ Return JSON: {"title":"","primaryKeyword":"","sections":[{"h2":"","points":[""]}
     })
   }
 
-  async generateUnsplashImage(prompt) {
-    try {
-      const hash  = require('crypto').createHash('md5').update(prompt).digest('hex')
-      const seed  = parseInt(hash.substring(0, 8), 16) % 1000
-      const resp  = await axios.get(`https://picsum.photos/800/600?random=${seed}`, { responseType: 'arraybuffer', timeout: 15000 })
-      const base64 = Buffer.from(resp.data).toString('base64')
-      const ct     = resp.headers['content-type'] || 'image/jpeg'
-      return `data:${ct};base64,${base64}`
-    } catch (err) {
-      console.log('Lorem Picsum fallback failed:', err.message)
+  async generateUnsplashImage(keywords) {
+    // 1. Try Pexels API — free, reliable, actually keyword-relevant
+    const pexelsKey = process.env.PEXELS_API_KEY
+    if (pexelsKey) {
+      try {
+        const query = encodeURIComponent(keywords || 'productivity startup india')
+        const resp  = await axios.get(
+          `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&per_page=5&page=1`,
+          { headers: { Authorization: pexelsKey }, timeout: 15000 }
+        )
+        const photos = resp.data?.photos
+        if (photos?.length) {
+          // Pick photo whose description/alt best matches — just take first result
+          const url  = photos[0].src.large2x || photos[0].src.original
+          const img  = await axios.get(url, { responseType: 'arraybuffer', timeout: 20000 })
+          const base64 = Buffer.from(img.data).toString('base64')
+          const ct     = img.headers['content-type'] || 'image/jpeg'
+          console.log(`[IMAGE] Pexels: "${keywords}" → ${photos[0].alt || url}`)
+          return `data:${ct};base64,${base64}`
+        }
+      } catch (err) {
+        console.log(`[IMAGE] Pexels failed: ${err.message}`)
+      }
     }
+
+    // 2. Fallback: Picsum with seed (consistent per keyword, not random)
+    try {
+      const hash = require('crypto').createHash('md5').update(keywords || 'default').digest('hex')
+      const seed = parseInt(hash.substring(0, 8), 16) % 1000
+      const resp = await axios.get(`https://picsum.photos/1200/627?random=${seed}`, {
+        responseType: 'arraybuffer', timeout: 15000, maxRedirects: 5,
+      })
+      if (resp.data?.byteLength > 5000) {
+        const base64 = Buffer.from(resp.data).toString('base64')
+        const ct     = resp.headers['content-type'] || 'image/jpeg'
+        console.log(`[IMAGE] Picsum fallback (seed ${seed}) — add PEXELS_API_KEY for relevant images`)
+        return `data:${ct};base64,${base64}`
+      }
+    } catch (err) {
+      console.log(`[IMAGE] Picsum also failed: ${err.message}`)
+    }
+
     return null
   }
 
